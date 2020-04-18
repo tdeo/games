@@ -14,7 +14,7 @@ import {
 import { LinkContainer } from 'react-router-bootstrap'
 
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Switch,
   Route,
 } from "react-router-dom";
