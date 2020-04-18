@@ -141,7 +141,7 @@ export default class Perudo {
     let remaining = [];
 
     for (let player of this.players) {
-      player.history << player.roll;
+      player.history.push(player.roll);
       player.roll = null;
       if (player.diceCount > 0) {
         remaining.push(player)

@@ -12,7 +12,9 @@ import Actions from './Actions';
 const Me = ({ diceCount, roll, actions }) => {
   if (diceCount <= 0) {
     return <Row>
-      La partie est finie, tu n'as plus de dés.
+      <Col>
+        La partie est finie, tu n'as plus de dés.
+      </Col>
     </Row>
   }
   return <>
