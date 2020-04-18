@@ -115,7 +115,7 @@ export default class Perudo {
     message += ` Il y a ${diceCount} ${this.previousBet.value} en tout.`
 
     let looser;
-    if (diceCount < this.previousBet.value) {
+    if (diceCount < this.previousBet.count) {
       looser = this.previousPlayer();
     } else {
       looser = this.currentPlayer();
