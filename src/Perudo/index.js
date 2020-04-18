@@ -11,7 +11,7 @@ import WsContext from '../wsContext';
 
 const WS_URL = (window.location.hostname === 'localhost')
   ? 'ws://localhost:3090'
-  : 'wss://yahtzeee.herokuapp.com';
+  : `wss://${window.location.hostname}`;
 
 const Perudo = () => {
   const [state, setState] = React.useState();
