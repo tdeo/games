@@ -7,7 +7,6 @@ export default class Perudo extends Game {
     super();
     this.currentPlayerIdx = null;
     this.previousBet = null;
-    this.started = false;
     this.previousTurn = null;
   }
 
@@ -32,38 +31,9 @@ export default class Perudo extends Game {
       diceCount: 5,
       history: [],
       roll: null,
-      ready: function() { return this.diceCount > 0 && this.roll !== null },
+      ready: function() { return this.diceCount === 0 || this.roll !== null },
+      canPlay: function() { return this.diceCount > 0 },
     };
-  }
-
-  previousPlayer() {
-    let i = this.currentPlayerIdx;
-    while (true) {
-      i = (i - 1 + this.players.length) % this.players.length
-      if (i === this.currentPlayerIdx) {
-        throw new Error('Pas de joueur précédent')
-      }
-      if (this.players[i].diceCount > 0) {
-        return this.players[i];
-      }
-    }
-  }
-
-  nextPlayer() {
-    let i = this.currentPlayerIdx;
-    while (true) {
-      i = (i + 1) % this.players.length
-      if (i === this.currentPlayerIdx) {
-        throw new Error('Pas de joueur suivant')
-      }
-      if (this.players[i].diceCount > 0) {
-        return this.players[i];
-      }
-    }
-  }
-
-  currentPlayer() {
-    return this.players[this.currentPlayerIdx];
   }
 
   perform(playerId, payload) {
@@ -115,7 +85,7 @@ export default class Perudo extends Game {
       previousPlayer: this.previousPlayer().name,
       betCount: this.previousBet.count,
       betValue: this.previousBet.value,
-      realValue: diceCount,
+      realCount: diceCount,
     }
 
     this.currentPlayerIdx = looser.idx;
@@ -203,7 +173,7 @@ export default class Perudo extends Game {
     this.addEvent({ message: `${this.currentPlayer().name} annonce ${payload.count} ${payload.value}, c'est au tour de ${this.nextPlayer().name}` })
 
     this.currentPlayer().actions = [];
-    this.currentPlayerIdx = this.nextPlayer().idx;
+    this.moveToNextPlayer();
     this.previousBet = payload;
     this.currentPlayer().actions = ['bet', 'accuse']
   }
@@ -222,11 +192,11 @@ export default class Perudo extends Game {
 
     player.roll = []
     for (let i = 0; i < player.diceCount; i++) {
-      player.roll.push(Math.floor(Math.random() * 6) + 1);
+      player.roll.push(this.rollDice());
     }
     player.roll.sort();
 
-    if (this.players.every(p => p.ready())) {
+    if (this.players.filter(p => p.canPlay()).every(p => p.ready())) {
       this.addEvent({ message: `Tous les joueurs ont lancé, c'est à ${this.currentPlayer().name} de jouer` })
       this.currentPlayer().actions.push('bet')
     }

@@ -12,7 +12,7 @@ const LastTurn = ({ players, previousTurn }) => {
   return <>
     <Col xs={12}>
       Dernier tour :<br />
-      {previousTurn.accuser} a accusé {previousTurn.previousPlayer} de mentir sur {previousTurn.betCount} <Dice value={previousTurn.betValue} />, il y en avait {previousTurn.realValue}.
+      {previousTurn.accuser} a accusé {previousTurn.previousPlayer} de mentir sur {previousTurn.betCount} <Dice value={previousTurn.betValue} />, il y en avait {previousTurn.realCount}.
     </Col>
     {players.map(p => <Col key={p.idx} className="p-1"
       style={{ minWidth: 180 }}>

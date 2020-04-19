@@ -35,4 +35,42 @@ export default class Game {
       ...payload,
     });
   }
+
+  moveToNextPlayer() {
+    this.currentPlayerIdx = this.nextPlayer().idx;
+  }
+
+  previousPlayer() {
+    let i = this.currentPlayerIdx;
+    while (true) {
+      i = (i - 1 + this.players.length) % this.players.length
+      if (i === this.currentPlayerIdx) {
+        throw new Error('Pas de joueur précédent')
+      }
+      if (this.players[i].canPlay()) {
+        return this.players[i];
+      }
+    }
+  }
+
+  nextPlayer() {
+    let i = this.currentPlayerIdx;
+    while (true) {
+      i = (i + 1) % this.players.length
+      if (i === this.currentPlayerIdx) {
+        throw new Error('Pas de joueur suivant')
+      }
+      if (this.players[i].canPlay()) {
+        return this.players[i];
+      }
+    }
+  }
+
+  currentPlayer() {
+    return this.players[this.currentPlayerIdx];
+  }
+
+  rollDice() {
+    return Math.floor(Math.random() * 6) + 1;
+  }
 }

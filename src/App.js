@@ -27,11 +27,13 @@ function App() {
     <ToastContainer />
     <Router>
       <Navbar expand="sm" bg="dark" variant="dark">
-        <Navbar.Brand>
-          <img src="/favicon.svg" height="30" className="mr-2"
-          style={{ marginTop: -4 }} />
-          Les jeux de Titi
-        </Navbar.Brand>
+        <LinkContainer to="/">
+          <Navbar.Brand>
+            <img src="/favicon.svg" height="30" className="mr-2"
+            style={{ marginTop: -4 }} />
+            Les jeux de Titi
+          </Navbar.Brand>
+        </LinkContainer>
         <Navbar.Toggle aria-controls="responsive-navbar" />
         <Navbar.Collapse id="responsive-navbar">
           <Nav className="mr-auto">

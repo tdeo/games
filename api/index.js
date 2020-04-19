@@ -98,15 +98,19 @@ const setupGame = (namespace, klass) => {
         gameBroadcast(game);
         lobbyBroadcast();
       } else if (action === 'newPlayer') {
+        let name = data.name.trim();
+        if (name === '') {
+          socket.emit('game_error', 'Il faut choisir un nom !');
+        }
         let game = games.find(g => g.uuid === data.gameUuid) || {};
         if (game.started) {
           socket.emit('game_error', 'Trop tard, la partie a déjà démarrée')
         } else {
           game.addEvent({
             event: 'newPlayer',
-            name: data.name,
+            name: name,
           });
-          game.addPlayer(socket.id, data.name);
+          game.addPlayer(socket.id, name);
           socket.game = game;
           socket.leave('lobby');
           socket.join(game.uuid);
@@ -114,9 +118,14 @@ const setupGame = (namespace, klass) => {
           lobbyBroadcast();
         }
       } else if (action === 'newGame') {
+        let name = data.name.trim();
+        if (name === '') {
+          socket.emit('game_error', 'Il faut choisir un nom !');
+        }
+
         let game = new klass();
         game.uuid = uuid();
-        game.name = data.name;
+        game.name = name;
         game.ts = Date.now();
         games.push(game);
         lobbyBroadcast();
