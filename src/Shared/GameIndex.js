@@ -17,7 +17,7 @@ const GameIndex = ({ games }) => {
   const [gameName, setGameName] = React.useState('');
 
   return <Row>
-    <Col xs={12} sm={6}>
+    <Col xs={12} md={6} lg={4}>
       {games.length > 0 && <>
         <h4>Parties en cours :</h4>
         {games.map(g => <GameConnection key={g.uuid}

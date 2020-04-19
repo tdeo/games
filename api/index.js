@@ -66,8 +66,9 @@ const setupGame = (namespace, klass) => {
 
     socket.on('disconnect', () => {
       const player = playerFor(socket);
+
       if (player) {
-        game.addEvent({
+        socket.game.addEvent({
           event: 'playerDisconnect',
           name: player.name,
         });
@@ -81,15 +82,17 @@ const setupGame = (namespace, klass) => {
       if (action === 'selectPlayer') {
         let game = games.find(g => g.uuid === data.gameUuid) || {};
         let player = (game.players || [])[data.idx];
-        if (player && !player.id) {
-          game.addEvent({
-            event: 'playerJoined',
-            name: player.name,
-          });
-          player.id = socket.id
-        } else {
-          socket.emit('game_error', 'Ce joueur est déjà dans la partie');
+        if (!player || player.id) {
+          return socket.emit('game_error',
+            'Ce joueur est déjà dans la partie',
+          );
         }
+        game.addEvent({
+          event: 'playerJoined',
+          name: player.name,
+        });
+        socket.game = game;
+        player.id = socket.id;
         socket.join(game.uuid);
         socket.leave('lobby');
         gameBroadcast(game);
