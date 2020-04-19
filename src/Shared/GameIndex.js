@@ -16,8 +16,6 @@ const GameIndex = ({ games }) => {
   const { mainAction } = React.useContext(WsContext);
   const [gameName, setGameName] = React.useState('');
 
-  console.log(games)
-
   return <Row>
     <Col xs={12} sm={6}>
       {games.length > 0 && <>

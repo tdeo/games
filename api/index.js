@@ -119,6 +119,14 @@ perudo.on('connection', (socket) => {
       socket.send('game_error', 'Vous n\'avez pas rejoint de partie')
     }
 
+    if (data.action === 'sendMessage') {
+      game.addMessage({
+        name: player.name,
+        message: data.message,
+      });
+      return broadcast();
+    }
+
     try {
       game.perform(id, data)
     } catch(error) {

@@ -19,7 +19,6 @@ const Game = ({ game }) => {
   React.useEffect(() => {
     const socket = io(`${WS_URL}/${game.wsNamespace}`);
     socket.on('state', (data) => {
-      console.log(data)
       setState(data);
     });
     socket.on('game_error', (message) => {
@@ -34,7 +33,7 @@ const Game = ({ game }) => {
       }
     }
     socket.on('close', window.location.reload);
-    return socket.disconnect;
+    return () => socket.disconnect();
   }, [game.wsNamespace])
 
   return <>

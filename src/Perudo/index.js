@@ -6,6 +6,8 @@ import {
 } from 'react-bootstrap';
 
 import Events from '../Shared/Events';
+import Chat from '../Shared/Chat';
+
 import LastTurn from './LastTurn';
 import Me from './Me';
 
@@ -23,22 +25,26 @@ const eventFormatter = ({ ts, event, ...data }) => {
   }
 }
 
-const Perudo = ({ players, events, previousBet, me }) => {
+const Perudo = ({ players, events, messages, previousTurn, me }) => {
   return <Row>
-    <Col xs={12} sm={6} md={4} className="mb-3">
+    <Col xs={12} md={6} lg={3} className="mb-3">
       <Events events={events} formatter={eventFormatter} />
     </Col>
 
-    <Col xs={12} sm={6} md={8}>
+    <Col xs={12} md={6} lg={3} className="mb-3">
+      <Chat messages={messages} name={me.name} />
+    </Col>
+
+    <Col xs={12} lg={6}>
       <Row className="mb-3">
         <Col xs={12} className="mb-3">
           Joueurs en lice :{' '}
           {players.map(p => `${p.name} (${p.diceCount} dés)`).join(', ')}
         </Col>
 
-        {!previousBet && me.history.length > 0 && <Col xs={12} className="mb-3">
+        {previousTurn && <Col xs={12} className="mb-3">
           <Row>
-            <LastTurn players={players} />
+            <LastTurn previousTurn={previousTurn} players={players} />
           </Row>
         </Col>}
       </Row>

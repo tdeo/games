@@ -53,9 +53,13 @@ const Actions = ({ actions, totalDices }) => {
           min={1} max={6} />
       </Col>
       <Col xs={12} md={4} className="my-2">
-        <Button onClick={() => gameAction('bet', {
-          value: betValue, count: betCount,
-        })}>
+        <Button onClick={() => {
+          gameAction('bet', {
+            value: betValue, count: betCount,
+          });
+          setBetValue('');
+          setBetCount('');
+        }}>
           Annoncer
         </Button>
       </Col>

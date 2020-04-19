@@ -37,7 +37,7 @@ function App() {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-      <Container className="mt-3">
+      <Container fluid className="mt-3">
         <Switch>
           <Route path="/perudo">
             <Game game={Perudo} />

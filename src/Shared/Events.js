@@ -12,7 +12,7 @@ const Events = ({ formatter, events }) => {
 
   React.useEffect(() => {
     bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
-  }, [events.length]);
+  }, [events.length, bodyRef]);
 
   return <Card>
     <Card.Header>

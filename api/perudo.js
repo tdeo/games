@@ -1,12 +1,14 @@
 'use strict';
 
-export default class Perudo {
+import Game from './game';
+
+export default class Perudo extends Game {
   constructor() {
-    this.players = [];
+    super();
     this.currentPlayerIdx = null;
     this.previousBet = null;
-    this.events = []
     this.started = false;
+    this.previousTurn = null;
   }
 
   stateFor(playerId) {
@@ -16,35 +18,22 @@ export default class Perudo {
         ...p,
         roll: null,
       })),
+      messages: this.messages,
       me: me,
       events: this.events,
+      previousTurn: this.previousTurn,
       previousBet: this.previousBet,
       started: this.started,
     };
   }
 
-  addEvent(payload) {
-    this.events.push({
-      ts: Date.now(),
-      ...payload,
-    })
-  }
-
-  addPlayer(id, name) {
-    if (this.started) {
-      return;
-    }
-
-    this.players.push({
-      id: id,
-      idx: this.players.length,
-      name: name,
+  emptyPlayer() {
+    return {
       diceCount: 5,
       history: [],
       roll: null,
-      actions: (this.players.length === 0) ? ['startGame'] : [],
       ready: function() { return this.diceCount > 0 && this.roll !== null },
-    });
+    };
   }
 
   previousPlayer() {
@@ -119,6 +108,14 @@ export default class Perudo {
       looser = this.previousPlayer();
     } else {
       looser = this.currentPlayer();
+    }
+
+    this.previousTurn = {
+      accuser: this.currentPlayer().name,
+      previousPlayer: this.previousPlayer().name,
+      betCount: this.previousBet.count,
+      betValue: this.previousBet.value,
+      realValue: diceCount,
     }
 
     this.currentPlayerIdx = looser.idx;

@@ -21,7 +21,7 @@ const Me = ({ diceCount, roll, actions }) => {
     {roll && <Row>
       <Col xs={12}>
         Mon tirage :
-        {roll.map((v, i) => <Dice key={i} value={v} color="red" />)}
+        {roll.map((v, i) => <Dice roll key={i} value={v} />)}
       </Col>
     </Row>}
     <Row>

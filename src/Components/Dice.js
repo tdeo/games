@@ -13,7 +13,7 @@ const Dice = ({ color, value, roll }) => {
 
 Dice.defaultProps = {
   color: 'red',
-  roll: true,
+  roll: false,
 }
 
 export default Dice;
