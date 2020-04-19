@@ -28,11 +28,11 @@ const eventFormatter = ({ ts, event, ...data }) => {
 const Perudo = ({ players, events, messages, previousTurn, me }) => {
   return <Row>
     <Col xs={12} md={6} lg={3} className="mb-3">
-      <Events events={events} formatter={eventFormatter} />
+      <Chat messages={messages} name={me.name} />
     </Col>
 
     <Col xs={12} md={6} lg={3} className="mb-3">
-      <Chat messages={messages} name={me.name} />
+      <Events events={events} formatter={eventFormatter} />
     </Col>
 
     <Col xs={12} lg={6}>
