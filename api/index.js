@@ -18,8 +18,11 @@ const uuid = () => {
 
 const broadcast = () => {
   for (let socketKey in perudo.sockets) {
-    let socket = perudo.sockets[socketKey]
-    const player = game.players.find(p => p.id === socket.id);
+    const socket = perudo.sockets[socketKey]
+
+    const game = socket.game || {};
+    const player = (game.players || []).find(p => p.id === socket.id);
+
     if (player) {
       perudo.sockets[socketKey].emit(
         'state',
@@ -33,10 +36,13 @@ const broadcast = () => {
         'state',
         {
           connected: false,
-          players: game.players.map(p => ({
-            name: p.name,
-            idx: p.idx,
-            connected: !!p.id,
+          games: games.perudo.map(g => ({
+            ...g,
+            players: (g.players || []).map(p => ({
+              name: p.name,
+              idx: p.idx,
+              connected: !!p.id,
+            }))
           }))
         }
       )
@@ -44,47 +50,75 @@ const broadcast = () => {
   }
 }
 
-let game;
+let games = {};
 perudo.on('connection', (socket) => {
-  if (!game) {
-    game = new Perudo();
+  if (!games.perudo) {
+    games.perudo = [];
   }
 
   broadcast();
   const id = socket.id;
 
   socket.on('disconnect', () => {
-    const player = game.players.find(p => p.id === id)
+    const game = socket.game || {};
+    const player = (game.players || []).find(p => p.id === id)
     if (player) {
-      game.addEvent(`${player.name} s'est déconnecté`)
+      game.addEvent({
+        event: 'playerDisconnect',
+        name: player.name,
+      })
       player.id = null;
+      socket.game = null;
     }
     broadcast();
   })
 
-  socket.on('selectPlayer', (data) => {
-    console.log('selectPlayer', data)
-    let player = game.players[data.idx];
-    if (!player.id) {
-      game.addEvent(`${player.name} s'est reconnecté`)
-      player.id = id;
+  socket.on('mainAction', ({ action, ...data }) => {
+    if (action === 'selectPlayer') {
+      let game = games.perudo.find(g => g.uuid = data.gameUuid)
+      let player = game.players[data.idx];
+      if (!player.id) {
+        game.addEvent({
+          event: 'playerJoined',
+          name: player.name,
+        });
+        player.id = id;
+      } else {
+        socket.emit('game_error', 'Ce joueur est déjà dans la partie.')
+      }
+      socket.game = game;
+    } else if (action === 'newPlayer') {
+      let game = games.perudo.find(g => g.uuid = data.gameUuid)
+      if (game.started) {
+        socket.emit('game_error', 'Trop tard, la partie a déjà démarré')
+      } else {
+        game.addEvent({
+          event: 'newPlayer',
+          name: data.name,
+        });
+        game.addPlayer(id, data.name);
+        socket.game = games.perudo.find(g => g.uuid = data.gameUuid);
+      }
+    } else if (action === 'newGame') {
+      let game = new Perudo();
+      game.uuid = uuid();
+      game.name = data.name;
+      game.ts = Date.now();
+      games.perudo.push(game);
     }
     broadcast();
   })
 
-  socket.on('newPlayer', (data) => {
-    console.log('newPlayer', data)
-    game.addEvent(`${data.name} a rejoint la partie`)
-    game.addPlayer(id, data.name)
-    broadcast();
-  })
+  socket.on('gameAction', (data) => {
+    console.log('action', data.action, data);
 
-  socket.on('resetGame', (data) => {
-    game = new Perudo();
-    broadcast();
-  })
+    let game = socket.game || {};
+    let player = (game.players || []).find(p => p.id === id);
 
-  socket.on('action', (data) => {
+    if (!player) {
+      socket.send('game_error', 'Vous n\'avez pas rejoint de partie')
+    }
+
     try {
       game.perform(id, data)
     } catch(error) {
@@ -92,7 +126,7 @@ perudo.on('connection', (socket) => {
       socket.emit('game_error', error.message)
     }
     broadcast();
-  })
+  });
 });
 
 app.use(express.static(path.join(__dirname, '..', 'build')));

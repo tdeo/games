@@ -19,7 +19,8 @@ import {
   Route,
 } from "react-router-dom";
 
-import Perudo from './Perudo';
+import * as Perudo from './Perudo';
+import Game from './Shared/Game';
 
 function App() {
   return <>
@@ -39,7 +40,7 @@ function App() {
       <Container className="mt-3">
         <Switch>
           <Route path="/perudo">
-            <Perudo />
+            <Game game={Perudo} />
           </Route>
         </Switch>
       </Container>

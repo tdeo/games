@@ -15,7 +15,7 @@ const LastTurn = ({ players }) => {
       {p.name}
       <br />
       {p.history[p.history.length - 1].map((d,i) =>
-        <Dice key={i} value={d} />
+        <Dice key={i} value={d} roll={false} />
       )}
     </Col>)}
   </>

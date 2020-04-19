@@ -2,16 +2,18 @@ import React from 'react';
 
 import './Dice.css';
 
-const Dice = ({ color, value }) => {
+const Dice = ({ color, value, roll }) => {
   return (
-    <div className="dice" style={{ backgroundColor: color }}>
+    <div className={`dice ${roll ? 'dice-roll' : ''}`}
+      style={{ backgroundColor: color }}>
       {value}
     </div>
   );
 }
 
 Dice.defaultProps = {
-  color: 'red'
+  color: 'red',
+  roll: true,
 }
 
 export default Dice;

@@ -1,0 +1,16 @@
+@keyframes flash {
+  from {
+    background-color: lightgoldenrodyellow;
+  }
+  50% {
+    background-color: lightgoldenrodyellow;
+  }
+  to {
+    background-color: initial;
+    font-weight: initial;
+  }
+}
+
+.flash {
+  animation: flash 3s ease-out;
+}

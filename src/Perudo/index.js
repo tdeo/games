@@ -1,58 +1,52 @@
 import React from 'react';
 
-import io from 'socket.io-client';
+import {
+  Row,
+  Col,
+} from 'react-bootstrap';
 
-import { toast } from 'react-toastify';
+import Events from '../Shared/Events';
+import LastTurn from './LastTurn';
+import Me from './Me';
 
-import Connection from './Connection';
-import Game from './Game';
-
-import WsContext from '../wsContext';
-
-const WS_URL = (window.location.hostname === 'localhost')
-  ? 'ws://localhost:3090'
-  : `wss://${window.location.hostname}`;
-
-const Perudo = () => {
-  const [state, setState] = React.useState();
-
-  const action = React.useRef();
-
-  React.useEffect(() => {
-    const socket = io(`${WS_URL}/perudo`);
-    socket.on('state', (data) => {
-      setState(data);
-    });
-    socket.on('game_error', (message) => {
-      toast.error(message);
-    });
-    action.current = (action, payload) => {
-      if (action !== 'newPlayer' &&
-          action !== 'selectPlayer' &&
-          action !== 'resetGame') {
-        if (!payload) {
-          payload = {};
-        }
-        payload.action = action;
-        action = 'action';
-      }
-      socket.emit(action, payload);
-    }
-    socket.on('close', window.location.reload);
-    return socket.disconnect;
-  }, [])
-
-  return <>
-    <h1>Perudo</h1>
-
-    {!state
-      ? <div>Connection en cours...</div>
-      : <WsContext.Provider value={action.current}>
-          {state.connected
-            ? <Game {...state} />
-            : <Connection action={action.current} {...state} />}
-        </WsContext.Provider>}
-  </>;
+const eventFormatter = ({ ts, event, ...data }) => {
+  if (event === 'playerJoined') {
+    return `${data.name} s'est reconnecté`;
+  } else if (event === 'playerDisconnect') {
+    return `${data.name} s'est déconnecté`;
+  } else if (event === 'newPlayer') {
+    return `${data.name} a rejoint la partie`;
+  } else if ('message' in data) {
+    return data.message;
+  } else {
+    return JSON.stringify(data);
+  }
 }
 
-export default Perudo;
+const Perudo = ({ players, events, previousBet, me }) => {
+  return <Row>
+    <Col xs={12} sm={6} md={4} className="mb-3">
+      <Events events={events} formatter={eventFormatter} />
+    </Col>
+
+    <Col xs={12} sm={6} md={8}>
+      <Row className="mb-3">
+        <Col xs={12} className="mb-3">
+          Joueurs en lice :{' '}
+          {players.map(p => `${p.name} (${p.diceCount} dés)`).join(', ')}
+        </Col>
+
+        {!previousBet && me.history.length > 0 && <Col xs={12} className="mb-3">
+          <Row>
+            <LastTurn players={players} />
+          </Row>
+        </Col>}
+      </Row>
+      <Me {...me} />
+    </Col>
+  </Row>;
+}
+
+export const Component = Perudo;
+export const wsNamespace = 'perudo';
+export const title = 'Perudo';

@@ -23,10 +23,10 @@ export default class Perudo {
     };
   }
 
-  addEvent(message) {
+  addEvent(payload) {
     this.events.push({
       ts: Date.now(),
-      message,
+      ...payload,
     })
   }
 
@@ -134,7 +134,7 @@ export default class Perudo {
       message += ` ${looser.name} perd un dé.`
     }
 
-    this.addEvent(message)
+    this.addEvent({ message });
     looser.diceCount -= 1;
     this.previousBet = null;
 
@@ -153,13 +153,13 @@ export default class Perudo {
       for (let player of this.players) {
         player.actions = [];
       }
-      this.addEvent(`${remaining[0].name} a gagné la partie`)
+      this.addEvent({ message: `${remaining[0].name} a gagné la partie` })
     }
   }
 
   startGame() {
     this.started = true;
-    this.addEvent(`${this.players[0].name} a lancé la partie`)
+    this.addEvent({ message: `${this.players[0].name} a lancé la partie` })
     this.currentPlayerIdx = 0;
     for (let player of this.players) {
       player.actions = ['shake'];
@@ -168,6 +168,10 @@ export default class Perudo {
 
   isValid(bet) {
     const previous = this.previousBet;
+
+    if (!bet.count || !bet.value) {
+      return false;
+    }
 
     if (this.palifico) {
       if (!previous) {
@@ -199,7 +203,7 @@ export default class Perudo {
       throw new Error('Cette annonce n\'est pas valide');
     }
 
-    this.addEvent(`${this.currentPlayer().name} annonce ${payload.count} ${payload.value}, c'est au tour de ${this.nextPlayer().name}`)
+    this.addEvent({ message: `${this.currentPlayer().name} annonce ${payload.count} ${payload.value}, c'est au tour de ${this.nextPlayer().name}` })
 
     this.currentPlayer().actions = [];
     this.currentPlayerIdx = this.nextPlayer().idx;
@@ -226,7 +230,7 @@ export default class Perudo {
     player.roll.sort();
 
     if (this.players.every(p => p.ready())) {
-      this.addEvent(`Tous les joueurs ont lancé, c'est à ${this.currentPlayer().name} de jouer`)
+      this.addEvent({ message: `Tous les joueurs ont lancé, c'est à ${this.currentPlayer().name} de jouer` })
       this.currentPlayer().actions.push('bet')
     }
   }

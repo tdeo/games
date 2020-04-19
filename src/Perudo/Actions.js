@@ -7,10 +7,10 @@ import {
   FormControl,
 } from 'react-bootstrap';
 
-import WsContext from '../wsContext';
+import WsContext from '../Shared/WsContext';
 
 const Actions = ({ actions, totalDices }) => {
-  const action = React.useContext(WsContext);
+  const { gameAction } = React.useContext(WsContext);
 
   const [betValue, setBetValue] = React.useState('');
   const [betCount, setBetCount] = React.useState('');
@@ -18,21 +18,21 @@ const Actions = ({ actions, totalDices }) => {
   return <>
     {actions.includes('startGame') && <Row>
       <Col xs={12}>
-        <Button onClick={() => action('startGame')}>
+        <Button onClick={() => gameAction('startGame')}>
           Démarrer la partie
         </Button>
       </Col>
     </Row>}
     {actions.includes('shake') && <Row>
       <Col xs={12}>
-        <Button onClick={() => action('shake')}>
+        <Button onClick={() => gameAction('shake')}>
           Lancer mes dés
         </Button>
       </Col>
     </Row>}
     {actions.includes('accuse') && <Row>
       <Col xs={12}>
-        <Button onClick={() => action('accuse')}>
+        <Button onClick={() => gameAction('accuse')}>
           Menteur !
         </Button>
       </Col>
@@ -53,7 +53,7 @@ const Actions = ({ actions, totalDices }) => {
           min={1} max={6} />
       </Col>
       <Col xs={12} md={4} className="my-2">
-        <Button onClick={() => action('bet', {
+        <Button onClick={() => gameAction('bet', {
           value: betValue, count: betCount,
         })}>
           Annoncer
