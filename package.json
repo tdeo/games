@@ -24,7 +24,8 @@
     "api": "babel-node api/",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "favicon": "convert -background none -density 100 public/favicon.svg -resize 256x256 public/favicon.ico"
   },
   "eslintConfig": {
     "extends": "react-app"
