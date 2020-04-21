@@ -11,7 +11,7 @@ import WsContext from '../Shared/WsContext';
 
 const WS_URL = (window.location.hostname === 'localhost')
   ? 'ws://localhost:3090'
-  : `wss://${window.location.hostname}`;
+  : `wss://jeux-de-titi.herokuapp.com`;
 
 const Game = ({ game }) => {
   const [state, setState] = React.useState();
