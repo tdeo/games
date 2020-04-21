@@ -5,6 +5,7 @@ import io from 'socket.io-client';
 import { toast } from 'react-toastify';
 
 import GameIndex from '../Shared/GameIndex';
+import Audio from '../Shared/Audio/index';
 
 import WsContext from '../Shared/WsContext';
 
@@ -19,7 +20,7 @@ const Game = ({ game }) => {
   React.useEffect(() => {
     const socket = io(`${WS_URL}/${game.wsNamespace}`);
     socket.on('state', (data) => {
-      console.debug('Received state', data)
+      // console.debug('Received state', data)
       setState(data);
     });
     socket.on('game_error', (message) => {
@@ -31,7 +32,9 @@ const Game = ({ game }) => {
       },
       gameAction: (action, payload) => {
         socket.emit('gameAction', { ...payload, action });
-      }
+      },
+      id: socket.id,
+      socket: socket,
     }
     socket.on('close', window.location.reload);
     return () => socket.disconnect();
@@ -44,7 +47,10 @@ const Game = ({ game }) => {
       ? <div>Connection en cours...</div>
       : <WsContext.Provider value={action.current}>
           {state.connected
-            ? <game.Component {...state} />
+            ? <>
+                <Audio {...state} />
+                <game.Component {...state} />
+              </>
             : <GameIndex {...state} />}
         </WsContext.Provider>}
   </>;

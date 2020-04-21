@@ -8,7 +8,6 @@ import {
 import Dice from '../Components/Dice';
 
 const LastTurn = ({ players, previousTurn }) => {
-  console.log(previousTurn)
   return <>
     <Col xs={12}>
       Dernier tour :<br />

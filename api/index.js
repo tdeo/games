@@ -31,6 +31,9 @@ const setupGame = (namespace, klass) => {
     if (player) {
       socket.emit('state', {
         ...socket.game.stateFor(socket.id),
+        isAudioStarted: !!socket.game.audioHost,
+        audioHost: socket.game.audioHost,
+        isAudioHost: socket.game.audioHost === socket.id,
         connected: true,
       });
     } else {
@@ -67,6 +70,10 @@ const setupGame = (namespace, klass) => {
     socket.on('disconnect', () => {
       const player = playerFor(socket);
 
+      if (socket.game && socket.game.audioHost === socket.id) {
+        socket.game.audioHost = null;
+      }
+
       if (player) {
         socket.game.addEvent({
           event: 'playerDisconnect',
@@ -100,7 +107,7 @@ const setupGame = (namespace, klass) => {
       } else if (action === 'newPlayer') {
         let name = data.name.trim();
         if (name === '') {
-          socket.emit('game_error', 'Il faut choisir un nom !');
+          return socket.emit('game_error', 'Il faut choisir un nom !');
         }
         let game = games.find(g => g.uuid === data.gameUuid) || {};
         if (game.started) {
@@ -120,7 +127,7 @@ const setupGame = (namespace, klass) => {
       } else if (action === 'newGame') {
         let name = data.name.trim();
         if (name === '') {
-          socket.emit('game_error', 'Il faut choisir un nom !');
+          return socket.emit('game_error', 'Il faut choisir un nom !');
         }
 
         let game = new klass();
@@ -132,6 +139,15 @@ const setupGame = (namespace, klass) => {
       }
     });
 
+    socket.on('audioAction', ({ action, candidate, sdp, to }) => {
+      ioNamespace.sockets[to].emit('audioAction', {
+        action,
+        sdp,
+        candidate,
+        from: socket.id
+      });
+    })
+
     socket.on('gameAction', (data) => {
       let player = playerFor(socket);
       if (!player) {
@@ -139,7 +155,12 @@ const setupGame = (namespace, klass) => {
       }
 
       if (data.action === 'sendMessage') {
-        socket.game.addMessage({ name: player.name, message: data.message });
+        socket.game.addMessage({
+          name: player.name,
+          message: data.message,
+        });
+      } else if (data.action === 'audioHost') {
+        socket.game.audioHost = socket.id;
       } else {
         try {
           socket.game.perform(socket.id, data);
