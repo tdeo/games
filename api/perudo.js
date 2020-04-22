@@ -59,7 +59,7 @@ export default class Perudo extends Game {
     let message = `${this.currentPlayer().name} accuse ${this.previousPlayer().name} d'avoir menti.`;
 
     let diceCount = 0;
-    for (let player of this.players) {
+    for (let player of (this.players || [])) {
       for (let dice of player.roll) {
         if ((!this.palifico && dice === 1) ||
           (dice === this.previousBet.value)) {
