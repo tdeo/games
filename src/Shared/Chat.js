@@ -31,7 +31,7 @@ const Chat = ({ messages, name }) => {
   }
 
   const onKeyUp = (e) => {
-    if (e.keyCode === 'Enter') {
+    if (e.key === 'Enter') {
       sendMessage();
     }
   }

@@ -33,6 +33,9 @@ const setupGame = (namespace, klass) => {
         ...socket.game.stateFor(socket.id),
         audioMembers: socket.game.audioMembers,
         isAudioHost: socket.game.audioHost === socket.id,
+        messages: socket.game.messages,
+        events: socket.game.events,
+        started: socket.game.started,
         connected: true,
       });
     } else {
@@ -171,6 +174,8 @@ const setupGame = (namespace, klass) => {
         try {
           socket.game.perform(socket.id, data);
         } catch(error) {
+          console.log(socket.game)
+          console.error(error)
           socket.emit('game_error', error.message);
         }
       }

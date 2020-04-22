@@ -17,12 +17,9 @@ export default class Perudo extends Game {
         ...p,
         roll: null,
       })),
-      messages: this.messages,
       me: me,
-      events: this.events,
       previousTurn: this.previousTurn,
       previousBet: this.previousBet,
-      started: this.started,
     };
   }
 
