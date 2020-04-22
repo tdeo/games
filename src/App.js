@@ -30,7 +30,8 @@ function App() {
         <LinkContainer to="/">
           <Navbar.Brand>
             <img src="/favicon.svg" height="30" className="mr-2"
-            style={{ marginTop: -4 }} />
+            style={{ marginTop: -4 }}
+            alt="Logo: dice with 6 dots" />
             Les jeux de Titi
           </Navbar.Brand>
         </LinkContainer>

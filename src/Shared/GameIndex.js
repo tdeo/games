@@ -17,7 +17,7 @@ const GameIndex = ({ games }) => {
   const [gameName, setGameName] = React.useState('');
 
   const onKeyUp = (e) => {
-    if (e.keyCode === 'Enter') {
+    if (e.key === 'Enter') {
       submit();
     }
   }

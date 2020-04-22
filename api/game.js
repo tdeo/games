@@ -6,6 +6,7 @@ export default class Game {
     this.events = [];
     this.messages = [];
     this.started = false;
+    this.audioMembers = [];
   }
 
   addPlayer(id, name) {
@@ -20,6 +21,14 @@ export default class Game {
       name: name,
       actions: (this.players.length === 0) ? ['startGame'] : [],
     });
+  }
+
+  addAudioMember(id) {
+    this.audioMembers.push(id);
+  }
+
+  removeAudioMember(id) {
+    this.audioMembers = this.audioMembers.filter(e => e !== id);
   }
 
   addEvent(payload) {

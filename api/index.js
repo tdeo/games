@@ -31,8 +31,7 @@ const setupGame = (namespace, klass) => {
     if (player) {
       socket.emit('state', {
         ...socket.game.stateFor(socket.id),
-        isAudioStarted: !!socket.game.audioHost,
-        audioHost: socket.game.audioHost,
+        audioMembers: socket.game.audioMembers,
         isAudioHost: socket.game.audioHost === socket.id,
         connected: true,
       });
@@ -70,8 +69,8 @@ const setupGame = (namespace, klass) => {
     socket.on('disconnect', () => {
       const player = playerFor(socket);
 
-      if (socket.game && socket.game.audioHost === socket.id) {
-        socket.game.audioHost = null;
+      if (socket.game) {
+        socket.game.removeAudioMember(socket.id);
       }
 
       if (player) {
@@ -139,12 +138,17 @@ const setupGame = (namespace, klass) => {
       }
     });
 
-    socket.on('audioAction', ({ action, candidate, sdp, to }) => {
+    socket.on('audioAction', ({ action, candidate, sdp, to, from_uuid, to_uuid }) => {
+      if (action !== 'icecandidate') {
+        console.log(action, to, from_uuid, to_uuid)
+      }
       ioNamespace.sockets[to].emit('audioAction', {
         action,
         sdp,
         candidate,
-        from: socket.id
+        from: socket.id,
+        from_uuid: from_uuid,
+        to_uuid: to_uuid,
       });
     })
 
@@ -159,8 +163,10 @@ const setupGame = (namespace, klass) => {
           name: player.name,
           message: data.message,
         });
-      } else if (data.action === 'audioHost') {
-        socket.game.audioHost = socket.id;
+      } else if (data.action === 'joinAudio') {
+        socket.game.addAudioMember(socket.id)
+      } else if (data.action === 'leaveAudio') {
+        socket.game.removeAudioMember(socket.id);
       } else {
         try {
           socket.game.perform(socket.id, data);
