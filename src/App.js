@@ -20,6 +20,8 @@ import {
 } from "react-router-dom";
 
 import * as Perudo from './Perudo';
+import * as Yahtzee from './Yahtzee';
+
 import Game from './Shared/Game';
 
 function App() {
@@ -41,14 +43,16 @@ function App() {
             <LinkContainer to="/perudo">
               <Nav.Link>Perudo</Nav.Link>
             </LinkContainer>
+            <LinkContainer to="/yahtzee">
+              <Nav.Link>Yahtzee</Nav.Link>
+            </LinkContainer>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
       <Container fluid className="mt-3">
         <Switch>
-          <Route path="/perudo">
-            <Game game={Perudo} />
-          </Route>
+          <Route path="/perudo"><Game game={Perudo} /></Route>
+          <Route path="/yahtzee"><Game game={Yahtzee} /></Route>
         </Switch>
       </Container>
     </Router>

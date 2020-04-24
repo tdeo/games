@@ -8,6 +8,7 @@ export const http = require('http').createServer(app);
 export const io = require('socket.io')(http);
 
 import Perudo from './perudo';
+import Yahtzee from './yahtzee';
 
 const uuid = () => {
   const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
@@ -32,7 +33,6 @@ const setupGame = (namespace, klass) => {
       socket.emit('state', {
         ...socket.game.stateFor(socket.id),
         audioMembers: socket.game.audioMembers,
-        isAudioHost: socket.game.audioHost === socket.id,
         messages: socket.game.messages,
         events: socket.game.events,
         started: socket.game.started,
@@ -185,6 +185,7 @@ const setupGame = (namespace, klass) => {
 }
 
 setupGame('perudo', Perudo);
+setupGame('yahtzee', Yahtzee);
 
 app.use(express.static(path.join(__dirname, '..', 'build')));
 

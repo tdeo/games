@@ -1,13 +1,61 @@
 .dice {
-  box-shadow: inset 0px 0px 6px 1px rgba(0, 0, 0, 0.2), inset -1px -1px 3px 1px rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  border: 1px solid #aaa;
-  font-weight: bold;
+  display: inline-block;
+  position: relative;
+  user-select: none;
+
   height: 26px;
   width: 26px;
-  display: inline-block;
-  text-align: center;
+
   margin: 2px;
+
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  box-shadow: inset 0px 0px 6px 1px rgba(0, 0, 0, 0.2), inset -1px -1px 3px 1px rgba(0, 0, 0, 0.2);
+
+  font-weight: bold;
+  text-align: center;
+}
+
+.dice.dice-lg {
+  height: 35px;
+  width: 35px;
+  padding-top: 2px;
+  font-size: 20px;
+}
+
+.dice-click {
+  cursor: pointer;
+}
+
+.dice-locked::after {
+  content: "";
+  display: block;
+  background-size: contain;
+  background-image: url(/images/lock.svg);
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  width: 15px;
+  height: 15px;
+}
+
+.dice-locked {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.dice-disabled {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.dice-red {
+  color: white;
+  background-color: red;
+}
+.dice-red.dice-locked {
+  background-color: #ff8682;
+}
+.dice-red.dice-disabled {
+  background-color: #948e8e;
 }
 
 @keyframes dice-roll {
@@ -15,16 +63,16 @@
     color: transparent;
     transform: rotate(-3600deg);
   }
-  70% {
+  80% {
     color: transparent;
     transform: rotate(0deg);
   }
   to {
-    color: initial;
+    color: none;
     transform: rotate(360deg);
   }
 }
 
-.dice-roll {
+.dice.dice-roll {
   animation: dice-roll 0.9s ease-out;
 }

@@ -20,7 +20,7 @@ const Game = ({ game }) => {
   React.useEffect(() => {
     const socket = io(`${WS_URL}/${game.wsNamespace}`);
     socket.on('state', (data) => {
-      // console.debug('Received state', data)
+      console.debug('Received state', data)
       setState(data);
     });
     socket.on('game_error', (message) => {

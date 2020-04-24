@@ -39,8 +39,6 @@ const Perudo = ({ players, events, messages, previousTurn, me }) => {
       <Me {...me} />
       <Row className="mb-3">
         <Col xs={12} className="mb-3">
-        </Col>
-        <Col xs={12} className="mb-3">
           Joueurs en lice :{' '}
           {players.map(p => `${p.name} (${p.diceCount} dés)`).join(', ')}
         </Col>
