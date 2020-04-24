@@ -9,7 +9,7 @@ import WsContext from '../../Shared/WsContext';
 import PeerConnection from './PeerConnection';
 
 const Audio = ({ audioMembers }) => {
-  return null;
+  // return null;
 
   const { gameAction } = React.useContext(WsContext);
   const { socket } = React.useContext(WsContext);
