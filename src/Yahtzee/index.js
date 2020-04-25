@@ -28,11 +28,15 @@ const eventFormatter = ({ ts, event, ...data }) => {
 const Yahtzee = ({ players, events, messages, me, currentPlayer, currentRoll }) => {
   return <Row>
     <Col xs={12} md={4} lg={3} className="mb-3">
-      <Chat messages={messages} name={me.name} />
+      <Row className="mb-3">
+        <Col>
+          <Chat messages={messages} name={me.name} />
+        </Col>
+      </Row>
       <Events events={events} formatter={eventFormatter} />
     </Col>
 
-    <Col xs={12} md={4} lg={4}>
+    <Col xs={12} md={4} lg={4} className="mb-3">
       <Roll me={me} currentRoll={currentRoll} currentPlayer={currentPlayer} />
     </Col>
 

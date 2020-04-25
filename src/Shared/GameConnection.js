@@ -10,7 +10,7 @@ import {
 
 import WsContext from './WsContext';
 
-const Connection = ({ players, name, started, uuid }) => {
+const Connection = ({ players, name, started, uuid, autoFocus }) => {
   const { mainAction } = React.useContext(WsContext);
   const [playerName, setPlayerName] = React.useState('');
 
@@ -43,6 +43,7 @@ const Connection = ({ players, name, started, uuid }) => {
         Ou saisissez votre nom ci-dessous :
         <InputGroup>
           <FormControl placeholder="Votre nom" value={playerName}
+            autoFocus={autoFocus}
             onChange={e => setPlayerName(e.target.value)}
             onKeyUp={onKeyUp} />
           <InputGroup.Append>

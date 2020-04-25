@@ -7,6 +7,7 @@ export const app = express();
 export const http = require('http').createServer(app);
 export const io = require('socket.io')(http);
 
+import LasVegas from './lasVegas';
 import Perudo from './perudo';
 import Yahtzee from './yahtzee';
 
@@ -184,6 +185,7 @@ const setupGame = (namespace, klass) => {
   });
 }
 
+setupGame('lasvegas', LasVegas);
 setupGame('perudo', Perudo);
 setupGame('yahtzee', Yahtzee);
 

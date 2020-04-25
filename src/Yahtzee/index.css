@@ -1,0 +1,9 @@
+.table-bordered {
+  border: none;
+}
+
+tbody::after {
+  content: ' ';
+  height: 12px;
+  display: table-row;
+}

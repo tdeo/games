@@ -7,6 +7,8 @@ import {
 
 import WsContext from '../Shared/WsContext';
 
+import './index.css';
+
 const ScoreTable = ({ players, me }) => {
   const { gameAction } = React.useContext(WsContext);
 

@@ -31,7 +31,8 @@ const GameIndex = ({ games }) => {
     <Col xs={12} md={6} lg={4}>
       {games.length > 0 && <>
         <h4>Parties en cours :</h4>
-        {games.map(g => <GameConnection key={g.uuid}
+        {games.reverse().map((g, i) => <GameConnection key={g.uuid}
+          autoFocus={i === 0}
           {...g}
         />)}
       </>}
@@ -40,6 +41,7 @@ const GameIndex = ({ games }) => {
 
       <InputGroup>
         <FormControl placeholder="Nom de la partie" value={gameName}
+          autoFocus={games.length === 0}
           onChange={e => setGameName(e.target.value)}
           onKeyUp={onKeyUp} />
         <InputGroup.Append>

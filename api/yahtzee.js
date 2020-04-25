@@ -23,7 +23,6 @@ export default class Yahtzee extends Game {
     try {
       this.currentPlayerIdx = this.nextPlayer().idx;
     } catch {
-
     }
   }
 

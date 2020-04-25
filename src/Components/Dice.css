@@ -58,6 +58,28 @@
   background-color: #948e8e;
 }
 
+.dice-blue {
+  color: white;
+  background-color: blue;
+}
+.dice-purple {
+  color: white;
+  background-color: purple;
+}
+.dice-green {
+  color: white;
+  background-color: green;
+}
+.dice-black {
+  color: white;
+  background-color: black;
+}
+.dice-orange {
+  color: white;
+  background-color: darkorange;
+}
+
+
 @keyframes dice-roll {
   from {
     color: transparent;
