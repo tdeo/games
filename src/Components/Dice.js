@@ -2,7 +2,11 @@ import React from 'react';
 
 import './Dice.css';
 
-const Dice = ({ color, value, roll, size, locked, disabled, className, ...props }) => {
+const Dots = ({ value }) => <img
+  src={`/images/dots/${value}.svg`}
+  className="dice-dots" />;
+
+const Dice = ({ color, value, roll, size, locked, disabled, dotted, className, ...props }) => {
   const classes = ['dice'];
   if (className) { classes.push(className) }
   if (size) { classes.push(`dice-${size}`) }
@@ -14,7 +18,9 @@ const Dice = ({ color, value, roll, size, locked, disabled, className, ...props 
 
   return (
     <div className={classes.join(' ')} {...props}>
-      {value}
+      {dotted
+        ? <Dots value={value} />
+        : value}
     </div>
   );
 }
@@ -22,6 +28,7 @@ const Dice = ({ color, value, roll, size, locked, disabled, className, ...props 
 Dice.defaultProps = {
   color: 'red',
   roll: false,
+  dotted: true,
 }
 
 export default Dice;

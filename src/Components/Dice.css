@@ -23,6 +23,15 @@
   font-size: 20px;
 }
 
+.dice > img {
+  margin-top: -2px;
+}
+
+.dice-dots {
+  height: 100%;
+  width: 100%;
+}
+
 .dice-click {
   cursor: pointer;
 }
@@ -97,4 +106,23 @@
 
 .dice.dice-roll {
   animation: dice-roll 0.9s ease-out;
+}
+
+@keyframes dice-dots-roll {
+  from {
+    opacity: 0;
+    transform: rotate(-3600deg);
+  }
+  80% {
+    opacity: 0;
+    transform: rotate(0deg);
+  }
+  to {
+    opacity: none;
+    transform: rotate(360deg);
+  }
+}
+
+.dice.dice-roll > img {
+  animation: dice-dots-roll 0.9s ease-out;
 }
