@@ -21,8 +21,13 @@ const CurrentTurn = ({ me, currentPlayer }) => {
           ? 'Mon lancer :'
           : `Lancer de ${currentPlayer.name} :`}
         <br />
-        {currentPlayer.roll.map((v, i) => <Dice roll
-          key={i} value={v} color={currentPlayer.color} />)}
+        {currentPlayer.roll.map((v, i) => {
+          const isDifferent = (i > 0) && currentPlayer.roll[i - 1] !== v;
+
+          return <Dice roll
+            className={isDifferent ? 'ml-3' : null}
+            key={i} value={v} color={currentPlayer.color} />;
+        })}
         <br />
       </>}
 
