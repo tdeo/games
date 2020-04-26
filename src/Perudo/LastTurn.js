@@ -20,7 +20,7 @@ const LastTurn = ({ players, previousTurn }) => {
           {p.name}
         </Card.Header>
         <Card.Body className="p-1 text-center">
-          {p.history[p.history.length - 1].map((d,i) =>
+          {(p.history[p.history.length - 1] || []).map((d,i) =>
             <Dice key={i} value={d} roll={false} color={p.color} />
           )}
         </Card.Body>

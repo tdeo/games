@@ -51,7 +51,7 @@ export const Board = ({ me, players, casinos }) => {
 
           <Card.Footer>
             Gains possibles:
-            <ul className="mb-0q">
+            <ul className="mb-0">
               {bills.map((b, j) => <li key={j}>{b}&nbsp;000&nbsp;$</li>)}
             </ul>
           </Card.Footer>
