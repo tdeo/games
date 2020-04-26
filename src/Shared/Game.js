@@ -67,9 +67,6 @@ const Game = ({ game }) => {
 
   React.useEffect(() => {
     setState(null);
-  }, [game]);
-
-  React.useEffect(() => {
     const socket = io(`${WS_URL}/${game.wsNamespace}`);
     socket.on('state', (data) => {
       // console.debug('Received state', data)
@@ -98,17 +95,40 @@ const Game = ({ game }) => {
     {!state
       ? <div>Connection en cours...</div>
       : <WsContext.Provider value={action.current}>
-          {state.connected
-            ? <>
-                <Audio {...state} />
-                {state.started
-                  ? <game.Component {...state} />
-                  : <GameNotStarted {...state} />
-                }
-              </>
-            : <GameIndex {...state} />}
+          <ErrorBoundary>
+            {state.connected
+              ? <>
+                  <Audio {...state} />
+                  {state.started
+                    ? <game.Component {...state} />
+                    : <GameNotStarted {...state} />
+                  }
+                </>
+              : <GameIndex {...state} />}
+          </ErrorBoundary>
         </WsContext.Provider>}
   </>;
 }
 
 export default Game;
+
+class ErrorBoundary extends React.Component {
+  state = { hasError: false };
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <>
+        <h1>Oups, petit bug, recharge la page</h1>
+        <Button onClick={() => window.location.reload()}>
+          Recharger la page
+        </Button>
+      </>;
+    }
+
+    return this.props.children;
+  }
+}
