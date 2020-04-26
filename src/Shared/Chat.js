@@ -13,11 +13,34 @@ import WsContext from './WsContext';
 
 import './Chat.css';
 
-const Icon = ({ name }) => {
-  return <div className="icon">{name[0]}</div>;
+const Icon = ({ player }) => {
+  return <div className="icon"
+    style={{ backgroundColor: player.color, color: 'white' }}>
+      {player.name[0]}
+    </div>;
 }
 
-const Chat = ({ messages, name }) => {
+const Message = ({ message, players, me }) => {
+  let player = players.find(p => p.uuid === message.uuid);
+
+  const mine = player.uuid === me.uuid;
+
+  return <Row className="py-1 flash">
+    <Col className="flex-grow-0 px-1">
+      {!mine && <Icon player={player} />}
+    </Col>
+    <Col className={`px-1 ${mine ? 'text-right' : ''}`}>
+      <div className={`message ${mine ? 'mine' : ''}`}>
+        {message.message}
+      </div>
+    </Col>
+    <Col className="flex-grow-0 px-1">
+      {mine && <Icon player={player} />}
+    </Col>
+  </Row>;
+}
+
+const Chat = ({ messages, players, me }) => {
   const bodyRef = React.createRef();
   const { gameAction } = React.useContext(WsContext);
   const [message, setMessage] = React.useState('');
@@ -49,20 +72,8 @@ const Chat = ({ messages, name }) => {
       maxHeight: 'min(60vh, 500px)',
       overflowY: 'scroll'
     }} ref={bodyRef}>
-      {messages.map((m, i) => <Row key={i}
-        className="py-1 flash">
-        <Col className="flex-grow-0 px-1">
-          {name !== m.name && <Icon name={m.name} />}
-        </Col>
-        <Col className={`px-1 ${name === m.name ? 'text-right' : ''}`}>
-          <div className={`message ${(name === m.name ? 'mine' : '')}`}>
-            {m.message}
-          </div>
-        </Col>
-        <Col className="flex-grow-0 px-1">
-          {name === m.name && <Icon name={m.name} />}
-        </Col>
-      </Row>)}
+      {messages.map((m, i) => <Message key={i} message={m}
+          players={players} me={me} />)}
     </Card.Body>
     <Card.Footer>
       <InputGroup>

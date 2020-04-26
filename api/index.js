@@ -11,7 +11,7 @@ import LasVegas from './lasVegas';
 import Perudo from './perudo';
 import Yahtzee from './yahtzee';
 
-const uuid = () => {
+export const uuid = () => {
   const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
   return s4() + s4() + '-' + s4();
 };
@@ -165,6 +165,7 @@ const setupGame = (namespace, klass) => {
       if (data.action === 'sendMessage') {
         socket.game.addMessage({
           name: player.name,
+          uuid: player.uuid,
           message: data.message,
         });
       } else if (data.action === 'joinAudio') {

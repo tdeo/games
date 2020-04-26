@@ -180,7 +180,6 @@ export default class Yahtzee extends Game {
   }
 
   score(cat) {
-    console.debug(this.categories())
     if (!this.categories().includes(cat)) {
       throw new Error('Cette catégorie de score n\'est pas valide');
     }
@@ -192,6 +191,10 @@ export default class Yahtzee extends Game {
     };
 
     this.computeTotals(this.currentPlayer());
+
+    for (let player of this.players) {
+      player.actions = [];
+    }
 
     this.currentRoll = null;
     this.moveToNextPlayer();

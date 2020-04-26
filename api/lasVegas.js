@@ -31,9 +31,6 @@ export default class LasVegas extends Game {
         dices: {},
       });
     }
-    this.colors = [
-      'red', 'blue', 'purple', 'green', 'black', 'orange',
-    ];
   }
 
   stateFor(playerId) {
@@ -57,7 +54,6 @@ export default class LasVegas extends Game {
       diceCount: 8,
       earnings: [],
       roll: null,
-      color: this.colors.shift(),
       canPlay: function() { return this.diceCount > 0 },
     };
   }

@@ -15,7 +15,7 @@ const ScoreTable = ({ players, me }) => {
   const scoreFor = (player, cat) => {
     if ((me.id === player.id) && (me.actions.includes('score')) &&
       (cat in me.action_details.score)) {
-      return <td key={cat}>
+      return <td key={player.id}>
         <Button className="py-0 score-button"
           variant="outline-secondary" size="sm"
           onClick={() => gameAction('score', { category: cat })} >
@@ -23,12 +23,12 @@ const ScoreTable = ({ players, me }) => {
         </Button>
       </td>;
     }
-    return <td key={cat}>
+    return <td key={player.id}>
       {(player.scores[cat] || {}).value}
     </td>;
   }
   const computedScoreFor = (player, cat) => {
-    return <td key={cat}>
+    return <td key={player.id}>
       {player.computedScores[cat] === 0 ? '' : player.computedScores[cat]}
     </td>;
   }
@@ -37,7 +37,10 @@ const ScoreTable = ({ players, me }) => {
     <thead>
       <tr>
         <th />
-        {players.map(({ name, id }) => <th key={id}>{name}</th>)}
+        {players.map(({ name, id }) => <th key={id}
+          style={{ width: 60 }}>
+          {name}
+        </th>)}
       </tr>
     </thead>
 

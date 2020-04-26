@@ -11,29 +11,15 @@ import Chat from '../Shared/Chat';
 import Roll from './Roll';
 import ScoreTable from './ScoreTable';
 
-const eventFormatter = ({ ts, event, ...data }) => {
-  if (event === 'playerJoined') {
-    return `${data.name} s'est reconnecté`;
-  } else if (event === 'playerDisconnect') {
-    return `${data.name} s'est déconnecté`;
-  } else if (event === 'newPlayer') {
-    return `${data.name} a rejoint la partie`;
-  } else if ('message' in data) {
-    return data.message;
-  } else {
-    return JSON.stringify(data);
-  }
-}
-
-const Yahtzee = ({ players, events, messages, me, currentPlayer, currentRoll }) => {
+const Yahtzee = ({ formatter, players, events, messages, me, currentPlayer, currentRoll }) => {
   return <Row>
     <Col xs={12} md={4} lg={3} className="mb-3">
       <Row className="mb-3">
         <Col>
-          <Chat messages={messages} name={me.name} />
+          <Chat messages={messages} me={me} players={players} />
         </Col>
       </Row>
-      <Events events={events} formatter={eventFormatter} />
+      <Events events={events} formatter={formatter} />
     </Col>
 
     <Col xs={12} md={4} lg={4} className="mb-3">

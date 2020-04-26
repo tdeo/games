@@ -4,6 +4,7 @@ import './Dice.css';
 
 const Dots = ({ value }) => <img
   src={`/images/dots/${value}.svg`}
+  alt={`Dice side ${value}`}
   className="dice-dots" />;
 
 const Dice = ({ color, value, roll, size, locked, disabled, dotted, className, ...props }) => {

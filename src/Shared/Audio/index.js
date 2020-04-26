@@ -1,7 +1,9 @@
 import React from 'react';
 
 import {
-  Button
+  Row,
+  Col,
+  Button,
 } from 'react-bootstrap';
 
 import WsContext from '../../Shared/WsContext';
@@ -67,15 +69,17 @@ const Audio = ({ audioMembers }) => {
     gameAction('leaveAudio')
   }
 
-  return <>
-    {!joined && <Button onClick={joinAudio}>
-      Rejoindre l'audio
-    </Button>}
-    {joined && <Button onClick={stopAudio}>
-      Arrêter l'audio ({connections.length} connectés)
-    </Button>}
-    {streams.map(s => <HtmlAudio srcObject={s} key={s.id} />)}
-  </>;
+  return <Row className="mb-3">
+    <Col xs={12}>
+      {!joined && <Button onClick={joinAudio}>
+        Rejoindre l'audio
+      </Button>}
+      {joined && <Button onClick={stopAudio}>
+        Arrêter l'audio ({connections.length} connectés)
+      </Button>}
+      {streams.map(s => <HtmlAudio srcObject={s} key={s.id} />)}
+    </Col>
+  </Row>;
 }
 
 const HtmlAudio = ({ srcObject }) => {

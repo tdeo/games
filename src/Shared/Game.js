@@ -4,18 +4,70 @@ import io from 'socket.io-client';
 
 import { toast } from 'react-toastify';
 
-import GameIndex from '../Shared/GameIndex';
-import Audio from '../Shared/Audio/index';
+import {
+  Row,
+  Col,
+  Button,
+} from 'react-bootstrap';
 
-import WsContext from '../Shared/WsContext';
+import GameIndex from './GameIndex';
+import Audio from './Audio/index';
+import Chat from './Chat';
+import Events from './Events';
+import WsContext from './WsContext';
 
 const WS_URL = (window.location.hostname === 'localhost')
   ? 'ws://localhost:3090'
   : `wss://jeux-de-titi.herokuapp.com`;
 
+export const GameLayout = ({ messages, events, children, me, players }) => {
+  return <Row className="mb-3">
+    <Col xs={12} md={6} lg={3} className="mb-3">
+      <Chat messages={messages} me={me} players={players} />
+    </Col>
+
+    <Col xs={12} md={6} lg={3} className="mb-3">
+      <Events events={events} />
+    </Col>
+
+    <Col xs={12} lg={6}>
+      {children}
+    </Col>
+  </Row>;
+}
+
+const GameNotStarted = ({ messages, events, me, players }) => {
+  const { gameAction } = React.useContext(WsContext);
+
+  return <GameLayout messages={messages} events={events} me={me}
+    players={players}>
+    <Row className="mb-3">
+      <Col xs={12}>
+        Joueurs connectés : {players.map(p => p.name).join(', ')}
+        <br />
+        En attente que {players.find(p => p.actions.includes('startGame')).name} lance la partie
+      </Col>
+    </Row>
+
+    {me.actions.includes('startGame') &&
+      <Row className="mb-3">
+        <Col xs={12}>
+          <Button
+            onClick={() => gameAction('startGame')}>
+            Lancer la partie
+          </Button>
+        </Col>
+      </Row>}
+  </GameLayout>;
+}
+
 const Game = ({ game }) => {
   const [state, setState] = React.useState();
   const action = React.useRef();
+
+  React.useEffect(() => {
+    setState(null);
+  }, [game]);
 
   React.useEffect(() => {
     const socket = io(`${WS_URL}/${game.wsNamespace}`);
@@ -49,7 +101,10 @@ const Game = ({ game }) => {
           {state.connected
             ? <>
                 <Audio {...state} />
-                <game.Component {...state} />
+                {state.started
+                  ? <game.Component {...state} />
+                  : <GameNotStarted {...state} />
+                }
               </>
             : <GameIndex {...state} />}
         </WsContext.Provider>}

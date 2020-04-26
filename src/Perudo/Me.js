@@ -9,7 +9,7 @@ import Dice from '../Components/Dice';
 
 import Actions from './Actions';
 
-const Me = ({ diceCount, roll, actions }) => {
+const Me = ({ diceCount, roll, actions, color }) => {
   if (diceCount <= 0) {
     return <Row>
       <Col>
@@ -21,7 +21,7 @@ const Me = ({ diceCount, roll, actions }) => {
     {roll && <Row>
       <Col xs={12}>
         Mon tirage :
-        {roll.map((v, i) => <Dice roll key={i} value={v} />)}
+        {roll.map((v, i) => <Dice roll key={i} value={v} color={color} />)}
       </Col>
     </Row>}
     <Row>

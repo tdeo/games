@@ -15,17 +15,9 @@ const Roll = ({ currentRoll, currentPlayer, me }) => {
   const { gameAction } = React.useContext(WsContext);
 
   return <>
-    {actions.includes('startGame') && <Row>
-      <Col xs={12}>
-        <Button onClick={() => gameAction('startGame')}>
-          Démarrer la partie
-        </Button>
-      </Col>
-    </Row>}
-
-    {currentPlayer && ((me.actions !== [])
+    {(actions.length > 0)
       ? "A toi de jouer :"
-      : `C'est le tour de ${currentPlayer.name} :`) }
+      : `C'est le tour de ${currentPlayer.name} :`}
 
     {(currentRoll || []).map((roll, i) =>
       <Row key={i}>

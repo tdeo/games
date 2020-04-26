@@ -23,7 +23,14 @@ export const Board = ({ me, players, casinos }) => {
 
       <Col xs={12}>
         Jouers restants :
-        {players.filter(p => p.diceCount > 0).map(p => `${p.name} (${p.diceCount} dés)`).join(', ')}
+        {players.filter(p => p.diceCount > 0).map(p => <>
+          {p.name}{' '}
+          ({p.diceCount} dés{' '}
+          <Dice value="" color={p.color} dotted={false}
+            style={{ top: 8 }}/>
+          )
+          {' '}
+        </>)}
       </Col>
     </Row>
     <Row className="row-cols-2 row-cols-md-3">
@@ -44,7 +51,7 @@ export const Board = ({ me, players, casinos }) => {
 
           <Card.Footer>
             Gains possibles:
-            <ul>
+            <ul className="mb-0q">
               {bills.map((b, j) => <li key={j}>{b}&nbsp;000&nbsp;$</li>)}
             </ul>
           </Card.Footer>

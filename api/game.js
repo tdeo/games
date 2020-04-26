@@ -1,5 +1,7 @@
 'use strict';
 
+import { uuid } from './index';
+
 export default class Game {
   constructor() {
     this.players = [];
@@ -7,6 +9,17 @@ export default class Game {
     this.messages = [];
     this.started = false;
     this.audioMembers = [];
+
+    this.colors = [
+      'red', 'blue', 'purple', 'green', 'black', 'orange',
+    ];
+
+    for (let i = this.colors.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * i);
+      let t = this.colors[i];
+      this.colors[i] = this.colors[j];
+      this.colors[j] = t;
+    }
   }
 
   addPlayer(id, name) {
@@ -15,11 +28,14 @@ export default class Game {
     }
 
     this.players.push({
+      canPlay: () => true,
       ...this.emptyPlayer(),
       id: id,
+      uuid: uuid(),
       idx: this.players.length,
       name: name,
       actions: (this.players.length === 0) ? ['startGame'] : [],
+      color: this.colors.shift(),
     });
   }
 
