@@ -11,13 +11,13 @@ import {
   Navbar,
 } from 'react-bootstrap';
 
-import { LinkContainer } from 'react-router-bootstrap'
+import { LinkContainer } from 'react-router-bootstrap';
 
 import {
   HashRouter as Router,
   Switch,
   Route,
-} from "react-router-dom";
+} from 'react-router-dom';
 
 import * as LasVegas from './LasVegas';
 import * as Perudo from './Perudo';
@@ -32,9 +32,11 @@ function App() {
       <Navbar expand="sm" bg="dark" variant="dark">
         <LinkContainer to="/">
           <Navbar.Brand>
-            <img src="/favicon.svg" height="30" className="mr-2"
-            style={{ marginTop: -4 }}
-            alt="Logo: dice with 6 dots" />
+            <img
+              src="/favicon.svg" height="30" className="mr-2"
+              style={{ marginTop: -4 }}
+              alt="Logo: dice with 6 dots"
+            />
             Les jeux de Titi
           </Navbar.Brand>
         </LinkContainer>

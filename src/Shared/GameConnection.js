@@ -6,7 +6,7 @@ import {
   InputGroup,
   FormControl,
   Card,
-} from 'react-bootstrap'
+} from 'react-bootstrap';
 
 import WsContext from './WsContext';
 
@@ -18,12 +18,12 @@ const Connection = ({ players, name, started, uuid, autoFocus }) => {
     if (e.key === 'Enter') {
       submit();
     }
-  }
+  };
 
   const submit = () => {
-    mainAction('newPlayer', { name: playerName, gameUuid: uuid })
+    mainAction('newPlayer', { name: playerName, gameUuid: uuid });
     setPlayerName('');
-  }
+  };
 
   return <Card className="mb-3">
     <Card.Header>
@@ -32,30 +32,33 @@ const Connection = ({ players, name, started, uuid, autoFocus }) => {
     <Card.Body>
       Cliquez sur votre nom si vous étiez déja connecté :
       <ButtonToolbar>
-        {players.map(p => <Button key={p.idx} className="mr-2" variant="outline-secondary"
+        {players.map(p => <Button
+          key={p.idx} className="mr-2" variant="outline-secondary"
           disabled={p.connected}
-          onClick={() => mainAction('selectPlayer', { ...p, gameUuid: uuid })}
-          >
+          onClick={() => mainAction('selectPlayer', { ...p, gameUuid: uuid })}>
           {p.name}
         </Button>)}
       </ButtonToolbar>
       {!started && <>
         Ou saisissez votre nom ci-dessous :
         <InputGroup>
-          <FormControl placeholder="Votre nom" value={playerName}
+          <FormControl
+            placeholder="Votre nom" value={playerName}
             autoFocus={autoFocus}
             onChange={e => setPlayerName(e.target.value)}
-            onKeyUp={onKeyUp} />
+            onKeyUp={onKeyUp}
+          />
           <InputGroup.Append>
-            <Button variant="outline-secondary"
+            <Button
+              variant="outline-secondary"
               onClick={submit}>
-              C'est parti !
+              C&apos;est parti !
             </Button>
           </InputGroup.Append>
         </InputGroup>
       </>}
     </Card.Body>
-  </Card>
-}
+  </Card>;
+};
 
 export default Connection;

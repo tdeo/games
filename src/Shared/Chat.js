@@ -7,21 +7,22 @@ import {
   InputGroup,
   FormControl,
   Button,
-} from 'react-bootstrap'
+} from 'react-bootstrap';
 
 import WsContext from './WsContext';
 
 import './Chat.css';
 
 const Icon = ({ player }) => {
-  return <div className="icon"
+  return <div
+    className="icon"
     style={{ backgroundColor: player.color, color: 'white' }}>
-      {player.name[0]}
-    </div>;
-}
+    {player.name[0]}
+  </div>;
+};
 
 const Message = ({ message, players, me }) => {
-  let player = players.find(p => p.uuid === message.uuid);
+  const player = players.find(p => p.uuid === message.uuid);
 
   const mine = player.uuid === me.uuid;
 
@@ -38,7 +39,7 @@ const Message = ({ message, players, me }) => {
       {mine && <Icon player={player} />}
     </Col>
   </Row>;
-}
+};
 
 const Chat = ({ messages, players, me }) => {
   const bodyRef = React.createRef();
@@ -51,13 +52,13 @@ const Chat = ({ messages, players, me }) => {
     }
     setMessage('');
     gameAction('sendMessage', { message });
-  }
+  };
 
   const onKeyUp = (e) => {
     if (e.key === 'Enter') {
       sendMessage();
     }
-  }
+  };
 
   React.useEffect(() => {
     bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
@@ -68,27 +69,32 @@ const Chat = ({ messages, players, me }) => {
       Chat
     </Card.Header>
 
-    <Card.Body className="py-0" style={{
-      maxHeight: 'min(60vh, 500px)',
-      overflowY: 'scroll'
-    }} ref={bodyRef}>
-      {messages.map((m, i) => <Message key={i} message={m}
-          players={players} me={me} />)}
+    <Card.Body
+      className="py-0" style={{
+        maxHeight: 'min(60vh, 500px)',
+        overflowY: 'scroll',
+      }} ref={bodyRef}>
+      {messages.map((m, i) => <Message
+        key={i} message={m}
+        players={players} me={me}
+      />)}
     </Card.Body>
     <Card.Footer>
       <InputGroup>
-        <FormControl type="text" value={message}
+        <FormControl
+          type="text" value={message}
           onChange={e => setMessage(e.target.value)}
-          onKeyUp={onKeyUp} />
+          onKeyUp={onKeyUp}
+        />
         <InputGroup.Append>
           <Button onClick={sendMessage}>Envoyer</Button>
         </InputGroup.Append>
       </InputGroup>
     </Card.Footer>
   </Card>;
-}
+};
 Chat.defaultProps = {
   messages: [],
-}
+};
 
 export default Chat;

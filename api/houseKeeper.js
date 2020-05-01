@@ -1,4 +1,4 @@
-'use strict;'
+'use strict;';
 
 import fs from 'fs';
 import { promisify } from 'util';
@@ -20,17 +20,17 @@ const hget = promisify(redisClient.hget).bind(redisClient);
 const hset = promisify(redisClient.hset).bind(redisClient);
 
 class RedisHouseKeeper {
-  constructor(namespace, klass) {
+  constructor(namespace, Klass) {
     this.namespace = namespace;
-    this.klass = klass;
+    this.Klass = Klass;
   }
 
   async loadGames() {
-    let games = [];
+    const games = [];
     const keys = await hkeys(this.namespace);
-    for (let key of keys) {
-      let json = await hget(this.namespace, key);
-      let game = new this.klass();
+    for (const key of keys) {
+      const json = await hget(this.namespace, key);
+      const game = new this.Klass();
       game.deserialize(json);
       games.push(game);
     }
@@ -43,9 +43,9 @@ class RedisHouseKeeper {
 }
 
 class FileHouseKeeper {
-  constructor(namespace, klass) {
+  constructor(namespace, Klass) {
     this.namespace = namespace;
-    this.klass = klass;
+    this.Klass = Klass;
     this.dir = `${__dirname}/../tmp/${namespace}`;
     if (!fs.existsSync(this.dir)) {
       fs.mkdirSync(this.dir);
@@ -53,13 +53,13 @@ class FileHouseKeeper {
   }
 
   async loadGames() {
-    let games = [];
-    let keys = fs.readdirSync(this.dir);
-    for (let key of keys) {
-      let json = fs.readFileSync(`${this.dir}/${key}`);
-      let game = new this.klass();
+    const games = [];
+    const keys = fs.readdirSync(this.dir);
+    for (const key of keys) {
+      const json = fs.readFileSync(`${this.dir}/${key}`);
+      const game = new this.Klass();
       game.deserialize(json);
-      games.push(game)
+      games.push(game);
     }
     return games;
   }

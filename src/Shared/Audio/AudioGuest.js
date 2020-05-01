@@ -31,16 +31,16 @@ const AudioGuest = ({ audioHost }) => {
         selfRef.current.srcObject = stream;
       }
     });
-    pc.createOffer().catch(console.err);
-  }
+    pc.createOffer().catch(console.error);
+  };
 
   return <>
     {!audioJoined.current && <Button onClick={joinAudio}>
-      Rejoindre l'audio
+      Rejoindre l&apos;audio
     </Button>}
     <audio ref={peerRef} controls autoPlay />
     <audio ref={selfRef} controls autoPlay muted />
   </>;
-}
+};
 
 export default AudioGuest;

@@ -13,9 +13,9 @@ const Me = ({ diceCount, roll, actions, color }) => {
   if (diceCount <= 0) {
     return <Row>
       <Col>
-        La partie est finie, tu n'as plus de dés.
+        La partie est finie, tu n&apos;as plus de dés.
       </Col>
-    </Row>
+    </Row>;
   }
   return <>
     {roll && <Row>
@@ -29,7 +29,7 @@ const Me = ({ diceCount, roll, actions, color }) => {
         <Actions actions={actions} />
       </Col>
     </Row>
-  </>
-}
+  </>;
+};
 
 export default Me;

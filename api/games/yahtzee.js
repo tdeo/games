@@ -23,6 +23,7 @@ export default class Yahtzee extends Game {
     try {
       this.currentPlayerIdx = this.nextPlayer().idx;
     } catch {
+      // silence exception to be able to play single-player
     }
   }
 
@@ -42,7 +43,7 @@ export default class Yahtzee extends Game {
       return;
     }
     if (player.actions.findIndex(e => e === action) === -1) {
-      throw new Error('Vous ne pouvez pas jouer cette action pour l\'instant')
+      throw new Error('Vous ne pouvez pas jouer cette action pour l\'instant');
     }
 
     if (action === 'toggleLock') {
@@ -50,23 +51,23 @@ export default class Yahtzee extends Game {
     } else if (action === 'rollDices') {
       this.rollDices();
     } else if (action === 'score') {
-      this.score(payload.category)
+      this.score(payload.category);
     } else if (action === 'startGame') {
       this.startGame();
     }
   }
 
   scoreFor(category) {
-    let roll = this.currentRoll[this.currentRoll.length - 1].map(d => d.value);
+    const roll = this.currentRoll[this.currentRoll.length - 1].map(d => d.value);
 
-    let sum = roll.reduce((acc, i) => acc + i, 0);
+    const sum = roll.reduce((acc, i) => acc + i, 0);
 
-    let h = [0, 0, 0, 0, 0, 0, 0];
-    for (let val of roll) {
+    const h = [0, 0, 0, 0, 0, 0, 0];
+    for (const val of roll) {
       h[val] += 1;
     }
 
-    switch(category) {
+    switch (category) {
       case 'primeYahtzee':
         return h.includes(5) ? 100 : 0;
       case 'chance':
@@ -89,11 +90,11 @@ export default class Yahtzee extends Game {
   }
 
   computeTotals(player) {
-    let scores = player.scores;
-    let res = player.computedScores;
+    const scores = player.scores;
+    const res = player.computedScores;
 
     res.totalNombres = 0;
-    for (let k of ['1', '2', '3', '4', '5', '6']) {
+    for (const k of ['1', '2', '3', '4', '5', '6']) {
       if (k in scores) {
         res.totalNombres += scores[k].value;
       }
@@ -103,7 +104,7 @@ export default class Yahtzee extends Game {
     res.totalHaut = res.bonus + res.totalNombres;
 
     res.totalBas = 0;
-    for (let k of ['brelan', 'carre', 'full', 'petiteSuite', 'grandeSuite',
+    for (const k of ['brelan', 'carre', 'full', 'petiteSuite', 'grandeSuite',
       'yahtzee', 'chance']) {
       if (k in scores) {
         res.totalBas += scores[k].value;
@@ -114,11 +115,11 @@ export default class Yahtzee extends Game {
   }
 
   categories() {
-    let played = Object.keys(this.currentPlayer().scores).length;
+    const played = Object.keys(this.currentPlayer().scores).length;
 
     if (played > 13) {
       return [];
-    } else if (played == 13) {
+    } else if (played === 13) {
       return ['primeYahtzee'];
     } else {
       return ['1', '2', '3', '4', '5', '6', 'brelan', 'carre', 'full', 'petiteSuite', 'grandeSuite', 'yahtzee', 'chance'].filter(e => !(e in this.currentPlayer().scores));
@@ -127,15 +128,15 @@ export default class Yahtzee extends Game {
 
   startGame() {
     this.started = true;
-    this.addEvent({ message: `${this.players[0].name} a lancé la partie` })
+    this.addEvent({ message: `${this.players[0].name} a lancé la partie` });
     this.currentPlayerIdx = 0;
     this.currentPlayer().actions = ['rollDices'];
   }
 
   toggleLock(idx) {
-    let dice = this.currentRoll[this.currentRoll.length -1][idx];
+    const dice = this.currentRoll[this.currentRoll.length - 1][idx];
     if (!dice) {
-      throw new Error('Numéro du dé invalide')
+      throw new Error('Numéro du dé invalide');
     }
     dice.locked = !dice.locked;
   }
@@ -143,7 +144,7 @@ export default class Yahtzee extends Game {
   rollDices() {
     if (!this.currentRoll) {
       this.currentRoll = [];
-      let newRoll = [];
+      const newRoll = [];
       for (let i = 0; i < 5; i++) {
         newRoll.push({
           value: this.rollDice(),
@@ -152,9 +153,9 @@ export default class Yahtzee extends Game {
       }
       this.currentRoll.push(newRoll);
     } else {
-      let roll = this.currentRoll[this.currentRoll.length - 1];
-      let newRoll = [];
-      for (let dice of roll) {
+      const roll = this.currentRoll[this.currentRoll.length - 1];
+      const newRoll = [];
+      for (const dice of roll) {
         if (dice.locked) {
           newRoll.push({
             value: dice.value,
@@ -171,7 +172,7 @@ export default class Yahtzee extends Game {
     }
     this.currentPlayer().actions = ['score'];
     this.currentPlayer().action_details = { score: {} };
-    for (let cat of this.categories()) {
+    for (const cat of this.categories()) {
       this.currentPlayer().action_details.score[cat] = this.scoreFor(cat);
     }
     if (this.currentRoll.length < 3) {
@@ -192,7 +193,7 @@ export default class Yahtzee extends Game {
 
     this.computeTotals(this.currentPlayer());
 
-    for (let player of this.players) {
+    for (const player of this.players) {
       player.actions = [];
     }
 

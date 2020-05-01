@@ -34,53 +34,53 @@ const Audio = ({ audioMembers }) => {
       setConnections(conns => conns.filter(
         conn => conn.uuid !== pc.uuid
       ));
-    })
+    });
     return pc;
   }, [socket]);
 
   React.useEffect(() => {
     socket.on('audioAction', ({ action, ...data }) => {
       if (action === 'offer') {
-        let pc = newPc();
+        const pc = newPc();
         pc.peer = data.from;
-        pc.peer_uuid = data.from_uuid;
-        pc.onOffer(data.sdp).catch(console.err);
+        pc.peerUuid = data.fromUuid;
+        pc.onOffer(data.sdp).catch(console.error);
       }
-    })
-  }, [socket, newPc])
+    });
+  }, [socket, newPc]);
 
-  const joined = audioMembers.includes(socket.id)
+  const joined = audioMembers.includes(socket.id);
 
   const joinAudio = () => {
-    for (let member of audioMembers) {
-      let pc = newPc();
+    for (const member of audioMembers) {
+      const pc = newPc();
       pc.peer = member;
-      pc.createOffer().catch(console.err);
+      pc.createOffer().catch(console.error);
     }
-    gameAction('joinAudio')
-  }
+    gameAction('joinAudio');
+  };
 
   const stopAudio = () => {
-    for (let pc of connections) {
+    for (const pc of connections) {
       pc.close();
     }
     setStreams([]);
     setConnections([]);
-    gameAction('leaveAudio')
-  }
+    gameAction('leaveAudio');
+  };
 
   return <Row className="mb-3">
     <Col xs={12}>
       {!joined && <Button onClick={joinAudio}>
-        Rejoindre l'audio
+        Rejoindre l&apos;audio
       </Button>}
       {joined && <Button onClick={stopAudio}>
-        Arrêter l'audio ({connections.length} connectés)
+        Arrêter l&apos;audio ({connections.length} connectés)
       </Button>}
       {streams.map(s => <HtmlAudio srcObject={s} key={s.id} />)}
     </Col>
   </Row>;
-}
+};
 
 const HtmlAudio = ({ srcObject }) => {
   const ref = React.useRef();
@@ -92,6 +92,6 @@ const HtmlAudio = ({ srcObject }) => {
   }, [ref, srcObject]);
 
   return <audio autoPlay ref={ref} />;
-}
+};
 
 export default Audio;

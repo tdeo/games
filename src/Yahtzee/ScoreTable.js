@@ -3,7 +3,7 @@ import React from 'react';
 import {
   Table,
   Button,
-} from 'react-bootstrap'
+} from 'react-bootstrap';
 
 import WsContext from '../Shared/WsContext';
 
@@ -16,9 +16,10 @@ const ScoreTable = ({ players, me }) => {
     if ((me.uuid === player.uuid) && (me.actions.includes('score')) &&
       (cat in me.action_details.score)) {
       return <td key={player.uuid}>
-        <Button className="py-0 score-button"
+        <Button
+          className="py-0 score-button"
           variant="outline-secondary" size="sm"
-          onClick={() => gameAction('score', { category: cat })} >
+          onClick={() => gameAction('score', { category: cat })}>
           {me.action_details.score[cat]}
         </Button>
       </td>;
@@ -26,18 +27,19 @@ const ScoreTable = ({ players, me }) => {
     return <td key={player.uuid}>
       {(player.scores[cat] || {}).value}
     </td>;
-  }
+  };
   const computedScoreFor = (player, cat) => {
     return <td key={player.uuid}>
       {player.computedScores[cat] === 0 ? '' : player.computedScores[cat]}
     </td>;
-  }
+  };
 
   return <Table striped bordered size="sm">
     <thead>
       <tr>
         <th />
-        {players.map(({ name, id }) => <th key={id}
+        {players.map(({ name, id }) => <th
+          key={id}
           style={{ width: 60 }}>
           {name}
         </th>)}
@@ -144,6 +146,6 @@ const ScoreTable = ({ players, me }) => {
       </tr>
     </tbody>
   </Table>;
-}
+};
 
 export default ScoreTable;

@@ -47,15 +47,15 @@ export default class Perudo extends Game {
       return;
     }
     if (player.actions.findIndex(e => e === action) === -1) {
-      throw new Error('Vous ne pouvez pas jouer cette action pour l\'instant')
+      throw new Error('Vous ne pouvez pas jouer cette action pour l\'instant');
     }
 
     if (action === 'accuse') {
-      this.accuse()
+      this.accuse();
     } else if (action === 'bet') {
-      this.bet(payload)
+      this.bet(payload);
     } else if (action === 'shake') {
-      this.shake(socketId)
+      this.shake(socketId);
     } else if (action === 'startGame') {
       this.startGame();
     }
@@ -65,8 +65,8 @@ export default class Perudo extends Game {
     let message = `${this.currentPlayer().name} accuse ${this.previousPlayer().name} d'avoir menti.`;
 
     let diceCount = 0;
-    for (let player of (this.players)) {
-      for (let dice of player.roll || []) {
+    for (const player of (this.players)) {
+      for (const dice of player.roll || []) {
         if ((!this.palifico && dice === 1) ||
           (dice === this.previousBet.value)) {
           diceCount += 1;
@@ -74,7 +74,7 @@ export default class Perudo extends Game {
       }
     }
 
-    message += ` Il y a ${diceCount} ${this.previousBet.value} en tout.`
+    message += ` Il y a ${diceCount} ${this.previousBet.value} en tout.`;
 
     let looser;
     if (diceCount < this.previousBet.count) {
@@ -89,49 +89,49 @@ export default class Perudo extends Game {
       betCount: this.previousBet.count,
       betValue: this.previousBet.value,
       realCount: diceCount,
-    }
+    };
 
     this.currentPlayerIdx = looser.idx;
 
     this.palifico = false;
     if (looser.diceCount === 1) {
       this.currentPlayerIdx = this.nextPlayer().idx;
-      message += ` ${looser.name} perd son dernier dé, bye-bye.`
+      message += ` ${looser.name} perd son dernier dé, bye-bye.`;
     } else if (looser.diceCount === 2) {
       this.palifico = true;
-      message += ` ${looser.name} perd un dé, il est palifico.`
+      message += ` ${looser.name} perd un dé, il est palifico.`;
     } else {
-      message += ` ${looser.name} perd un dé.`
+      message += ` ${looser.name} perd un dé.`;
     }
 
     this.addEvent({ message });
     looser.diceCount -= 1;
     this.previousBet = null;
 
-    let remaining = [];
+    const remaining = [];
 
-    for (let player of this.players) {
+    for (const player of this.players) {
       player.history.push(player.roll);
       player.roll = null;
       if (player.diceCount > 0) {
-        remaining.push(player)
+        remaining.push(player);
         player.actions = ['shake'];
       }
     }
 
     if (remaining.length === 1) {
-      for (let player of this.players) {
+      for (const player of this.players) {
         player.actions = [];
       }
-      this.addEvent({ message: `${remaining[0].name} a gagné la partie` })
+      this.addEvent({ message: `${remaining[0].name} a gagné la partie` });
     }
   }
 
   startGame() {
     this.started = true;
-    this.addEvent({ message: `${this.players[0].name} a lancé la partie` })
+    this.addEvent({ message: `${this.players[0].name} a lancé la partie` });
     this.currentPlayerIdx = 0;
-    for (let player of this.players) {
+    for (const player of this.players) {
       player.actions = ['shake'];
     }
   }
@@ -177,16 +177,16 @@ export default class Perudo extends Game {
       throw new Error('Cette annonce n\'est pas valide');
     }
 
-    this.addEvent({ message: `${this.currentPlayer().name} annonce ${payload.count} ${payload.value}, c'est au tour de ${this.nextPlayer().name}` })
+    this.addEvent({ message: `${this.currentPlayer().name} annonce ${payload.count} ${payload.value}, c'est au tour de ${this.nextPlayer().name}` });
 
     this.currentPlayer().actions = [];
     this.moveToNextPlayer();
     this.previousBet = payload;
-    this.currentPlayer().actions = ['bet', 'accuse']
+    this.currentPlayer().actions = ['bet', 'accuse'];
   }
 
   shake(socketId) {
-    let player = this.players.find(e => e.socketId === socketId);
+    const player = this.players.find(e => e.socketId === socketId);
 
     if (player.diceCount <= 0) {
       return;
@@ -195,17 +195,17 @@ export default class Perudo extends Game {
       return;
     }
 
-    player.actions = player.actions.filter(a => a !== 'shake')
+    player.actions = player.actions.filter(a => a !== 'shake');
 
-    player.roll = []
+    player.roll = [];
     for (let i = 0; i < player.diceCount; i++) {
       player.roll.push(this.rollDice());
     }
     player.roll.sort();
 
     if (this.players.filter(p => this.canPlay(p)).every(p => this.playerReady(p))) {
-      this.addEvent({ message: `Tous les joueurs ont lancé, c'est à ${this.currentPlayer().name} de jouer` })
-      this.currentPlayer().actions.push('bet')
+      this.addEvent({ message: `Tous les joueurs ont lancé, c'est à ${this.currentPlayer().name} de jouer` });
+      this.currentPlayer().actions.push('bet');
     }
   }
 }

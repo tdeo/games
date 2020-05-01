@@ -13,7 +13,7 @@ const AudioHost = () => {
   React.useEffect(() => {
     socket.on('audioAction', ({ action, ...data }) => {
       if (action === 'offer') {
-        let pc = new PeerConnection({
+        const pc = new PeerConnection({
           socket: socket,
           peer: data.from,
         });
@@ -27,16 +27,15 @@ const AudioHost = () => {
             selfRef.current.srcObject = stream;
           }
         });
-        pc.onOffer(data.sdp).catch(console.err)
+        pc.onOffer(data.sdp).catch(console.error);
       }
-    })
-  }, [socket])
-
+    });
+  }, [socket]);
 
   return <>
     <audio ref={peerRef} controls autoPlay />
     <audio ref={selfRef} controls autoPlay muted />
   </>;
-}
+};
 
 export default AudioHost;

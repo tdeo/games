@@ -1,13 +1,8 @@
-'use strict;'
+'use strict;';
 
-import express from 'express';
 import path from 'path';
 
-export const app = express();
-export const http = require('http').createServer(app);
-export const io = require('socket.io')(http);
-
-const LOBBY = 'lobby';
+import express from 'express';
 
 import HouseKeeper from './houseKeeper';
 
@@ -15,27 +10,34 @@ import LasVegas from './games/lasVegas';
 import Perudo from './games/perudo';
 import Yahtzee from './games/yahtzee';
 
+export const app = express();
+export const http = require('http').createServer(app);
+
+export const io = require('socket.io')(http);
+
+const LOBBY = 'lobby';
+
 export const uuid = () => {
   const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
   return s4() + s4() + '-' + s4();
 };
 
-const setupGame = (namespace, klass) => {
-  let games = []
-  const houseKeeper = new HouseKeeper(namespace, klass);
+const setupGame = (namespace, Klass) => {
+  let games = [];
+  const houseKeeper = new HouseKeeper(namespace, Klass);
 
   houseKeeper.loadGames().then(res => {
     games = res;
-  })
+  });
 
-  let ioNamespace = io.of(namespace);
+  const ioNamespace = io.of(namespace);
 
   const playerFor = (socket) => {
     if (!socket.game) {
       return null;
     }
     return (socket.game.players || []).find(p => p.socketId === socket.id);
-  }
+  };
 
   const emit = (socket) => {
     const player = playerFor(socket);
@@ -63,20 +65,20 @@ const setupGame = (namespace, klass) => {
         })),
       });
     }
-  }
+  };
 
   const gameBroadcast = (game) => {
     if (game.uuid !== LOBBY) {
       houseKeeper.saveGame(game);
     }
-    for (let k in ioNamespace.in(game.uuid).sockets) {
-      emit(ioNamespace.in(game.uuid).sockets[k])
+    for (const k in ioNamespace.in(game.uuid).sockets) {
+      emit(ioNamespace.in(game.uuid).sockets[k]);
     }
-  }
+  };
 
   const lobbyBroadcast = () => {
     gameBroadcast({ uuid: LOBBY });
-  }
+  };
 
   ioNamespace.on('connection', (socket) => {
     socket.join(LOBBY);
@@ -103,8 +105,8 @@ const setupGame = (namespace, klass) => {
 
     socket.on('mainAction', ({ action, ...data }) => {
       if (action === 'selectPlayer') {
-        let game = games.find(g => g.uuid === data.gameUuid) || {};
-        let player = (game.players || [])[data.idx];
+        const game = games.find(g => g.uuid === data.gameUuid) || {};
+        const player = (game.players || [])[data.idx];
         if (!player || player.socketId) {
           return socket.emit('game_error',
             'Ce joueur est déjà dans la partie',
@@ -121,13 +123,13 @@ const setupGame = (namespace, klass) => {
         gameBroadcast(game);
         lobbyBroadcast();
       } else if (action === 'newPlayer') {
-        let name = data.name.trim();
+        const name = data.name.trim();
         if (name === '') {
           return socket.emit('game_error', 'Il faut choisir un nom !');
         }
-        let game = games.find(g => g.uuid === data.gameUuid) || {};
+        const game = games.find(g => g.uuid === data.gameUuid) || {};
         if (game.started) {
-          socket.emit('game_error', 'Trop tard, la partie a déjà démarrée')
+          socket.emit('game_error', 'Trop tard, la partie a déjà démarrée');
         } else {
           game.addEvent({
             event: 'newPlayer',
@@ -141,12 +143,12 @@ const setupGame = (namespace, klass) => {
           lobbyBroadcast();
         }
       } else if (action === 'newGame') {
-        let name = data.name.trim();
+        const name = data.name.trim();
         if (name === '') {
           return socket.emit('game_error', 'Il faut choisir un nom !');
         }
 
-        let game = new klass();
+        const game = new Klass();
         game.uuid = uuid();
         game.name = name;
         game.ts = Date.now();
@@ -155,22 +157,19 @@ const setupGame = (namespace, klass) => {
       }
     });
 
-    socket.on('audioAction', ({ action, candidate, sdp, to, from_uuid, to_uuid }) => {
-      if (action !== 'icecandidate') {
-        console.log(action, to, from_uuid, to_uuid)
-      }
+    socket.on('audioAction', ({ action, candidate, sdp, to, fromUuid, toUuid }) => {
       ioNamespace.sockets[to].emit('audioAction', {
         action,
         sdp,
         candidate,
         from: socket.id,
-        from_uuid: from_uuid,
-        to_uuid: to_uuid,
+        fromUuid: fromUuid,
+        toUuid: toUuid,
       });
-    })
+    });
 
     socket.on('gameAction', (data) => {
-      let player = playerFor(socket);
+      const player = playerFor(socket);
       if (!player) {
         return socket.emit('game_error', 'Vous n\'êtes pas dans cette partie');
       }
@@ -182,22 +181,22 @@ const setupGame = (namespace, klass) => {
           message: data.message,
         });
       } else if (data.action === 'joinAudio') {
-        socket.game.addAudioMember(socket.id)
+        socket.game.addAudioMember(socket.id);
       } else if (data.action === 'leaveAudio') {
         socket.game.removeAudioMember(socket.id);
       } else {
         try {
           socket.game.perform(socket.id, data);
-        } catch(error) {
-          console.log(socket.game)
-          console.error(error)
+        } catch (error) {
+          console.log(socket.game); /* eslint-disable-line no-console */
+          console.error(error);
           socket.emit('game_error', error.message);
         }
       }
       gameBroadcast(socket.game);
     });
   });
-}
+};
 
 setupGame('lasvegas', LasVegas);
 setupGame('perudo', Perudo);
@@ -205,6 +204,5 @@ setupGame('yahtzee', Yahtzee);
 
 app.use(express.static(path.join(__dirname, '..', 'build')));
 
-const port = process.env.PORT || 3090
+const port = process.env.PORT || 3090;
 http.listen(port, () => {});
-

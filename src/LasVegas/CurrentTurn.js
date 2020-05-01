@@ -24,9 +24,11 @@ const CurrentTurn = ({ me, currentPlayer }) => {
         {currentPlayer.roll.map((v, i) => {
           const isDifferent = (i > 0) && currentPlayer.roll[i - 1] !== v;
 
-          return <Dice roll
+          return <Dice
+            roll
             className={isDifferent ? 'ml-3' : null}
-            key={i} value={v} color={currentPlayer.color} />;
+            key={i} value={v} color={currentPlayer.color}
+          />;
         })}
         <br />
       </>}
@@ -34,24 +36,24 @@ const CurrentTurn = ({ me, currentPlayer }) => {
       {me.actions.includes('startGame') &&
         <Button onClick={() => gameAction('startGame')}>
           Démarrer la partie
-        </Button>
-      }
+        </Button>}
 
       {me.actions.includes('roll') &&
         <Button onClick={() => gameAction('roll')}>
           Lancer mes dés
-        </Button>
-      }
+        </Button>}
 
       {me.actions.includes('bet') && <>
         Miser sur :
         <ButtonToolbar>
           {[1, 2, 3, 4, 5, 6].filter(i =>
             currentPlayer.roll.includes(i)
-          ).map(i => <Dice key={String(i)}
+          ).map(i => <Dice
+            key={String(i)}
             value={i} size="lg"
             color={currentPlayer.color} className="mr-2"
-            onClick={() => gameAction('bet', { value: i })} />
+            onClick={() => gameAction('bet', { value: i })}
+          />
           )}
         </ButtonToolbar>
       </>}
@@ -59,10 +61,9 @@ const CurrentTurn = ({ me, currentPlayer }) => {
       {me.actions.includes('distribute') &&
         <Button onClick={() => gameAction('distribute')}>
           Distribuer les gains
-        </Button>
-      }
+        </Button>}
     </Col>
   </Row>;
-}
+};
 
 export default CurrentTurn;

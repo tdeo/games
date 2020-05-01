@@ -6,7 +6,7 @@ import {
   FormControl,
   Col,
   Row,
-} from 'react-bootstrap'
+} from 'react-bootstrap';
 
 import GameConnection from './GameConnection';
 
@@ -20,18 +20,19 @@ const GameIndex = ({ games }) => {
     if (e.key === 'Enter') {
       submit();
     }
-  }
+  };
 
   const submit = () => {
     mainAction('newGame', { name: gameName });
     setGameName('');
-  }
+  };
 
   return <Row>
     <Col xs={12} md={6} lg={4}>
       {games.length > 0 && <>
         <h4>Parties en cours :</h4>
-        {games.reverse().map((g, i) => <GameConnection key={g.uuid}
+        {games.reverse().map((g, i) => <GameConnection
+          key={g.uuid}
           autoFocus={i === 0}
           {...g}
         />)}
@@ -40,12 +41,15 @@ const GameIndex = ({ games }) => {
       <h4>Créer une nouvelle partie</h4>
 
       <InputGroup>
-        <FormControl placeholder="Nom de la partie" value={gameName}
+        <FormControl
+          placeholder="Nom de la partie" value={gameName}
           autoFocus={games.length === 0}
           onChange={e => setGameName(e.target.value)}
-          onKeyUp={onKeyUp} />
+          onKeyUp={onKeyUp}
+        />
         <InputGroup.Append>
-          <Button variant="outline-secondary"
+          <Button
+            variant="outline-secondary"
             onClick={submit}>
             Créer la partie
           </Button>

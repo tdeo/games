@@ -39,18 +39,22 @@ const Actions = ({ actions, totalDices }) => {
     </Row>}
     {actions.includes('bet') && <Row>
       <Col xs={12} md={4} className="my-2">
-        <FormControl value={betCount}
+        <FormControl
+          value={betCount}
           onChange={e => setBetCount(+e.target.value)}
           type="number"
           placeholder="Nombre de dés"
-          min={1} />
+          min={1}
+        />
       </Col>
       <Col xs={12} md={4} className="my-2">
-        <FormControl value={betValue}
+        <FormControl
+          value={betValue}
           onChange={e => setBetValue(+e.target.value)}
           type="number"
           placeholder="Valeur des dés"
-          min={1} max={6} />
+          min={1} max={6}
+        />
       </Col>
       <Col xs={12} md={4} className="my-2">
         <Button onClick={() => {
@@ -64,7 +68,7 @@ const Actions = ({ actions, totalDices }) => {
         </Button>
       </Col>
     </Row>}
-  </>
-}
+  </>;
+};
 
 export default Actions;

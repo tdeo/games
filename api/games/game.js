@@ -16,30 +16,29 @@ export default class Game {
     ];
 
     for (let i = this.colors.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * i);
-      let t = this.colors[i];
+      const j = Math.floor(Math.random() * i);
+      const t = this.colors[i];
       this.colors[i] = this.colors[j];
       this.colors[j] = t;
     }
   }
 
   deserialize(str) {
-    let parsed = JSON.parse(str);
+    const parsed = JSON.parse(str);
 
-    for (let k in parsed) {
+    for (const k in parsed) {
       this[k] = parsed[k];
     }
   }
 
   serialize() {
-    let res = {
+    return JSON.stringify({
       ...this,
       players: this.players.map(p => ({
         ...p,
         socketId: undefined,
       })),
-    };
-    return JSON.stringify(res);
+    });
   }
 
   canPlay(player) {
@@ -74,7 +73,7 @@ export default class Game {
     this.events.push({
       ts: Date.now(),
       ...payload,
-    })
+    });
   }
 
   addMessage(payload) {
@@ -91,9 +90,9 @@ export default class Game {
   previousPlayer() {
     let i = this.currentPlayerIdx;
     while (true) {
-      i = (i - 1 + this.players.length) % this.players.length
+      i = (i - 1 + this.players.length) % this.players.length;
       if (i === this.currentPlayerIdx) {
-        throw new Error('Pas de joueur précédent')
+        throw new Error('Pas de joueur précédent');
       }
       if (this.canPlay(this.players[i])) {
         return this.players[i];
@@ -104,9 +103,9 @@ export default class Game {
   nextPlayer() {
     let i = this.currentPlayerIdx;
     while (true) {
-      i = (i + 1) % this.players.length
+      i = (i + 1) % this.players.length;
       if (i === this.currentPlayerIdx) {
-        throw new Error('Pas de joueur suivant')
+        throw new Error('Pas de joueur suivant');
       }
       if (this.canPlay(this.players[i])) {
         return this.players[i];

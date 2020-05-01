@@ -30,7 +30,7 @@ const Yahtzee = ({ formatter, players, events, messages, me, currentPlayer, curr
       <ScoreTable players={players} me={me} />
     </Col>
   </Row>;
-}
+};
 
 export const Component = Yahtzee;
 export const wsNamespace = 'yahtzee';

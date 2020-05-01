@@ -18,7 +18,7 @@ import WsContext from './WsContext';
 
 const WS_URL = (window.location.hostname === 'localhost')
   ? 'ws://localhost:3090'
-  : `wss://jeux-de-titi.herokuapp.com`;
+  : 'wss://jeux-de-titi.herokuapp.com';
 
 export const GameLayout = ({ messages, events, children, me, players }) => {
   return <Row className="mb-3">
@@ -34,14 +34,13 @@ export const GameLayout = ({ messages, events, children, me, players }) => {
       {children}
     </Col>
   </Row>;
-}
+};
 
 const GameNotStarted = ({ messages, events, me, players }) => {
   const { gameAction } = React.useContext(WsContext);
 
-  console.log(players.find(p => p.actions.includes('startGame')));
-
-  return <GameLayout messages={messages} events={events} me={me}
+  return <GameLayout
+    messages={messages} events={events} me={me}
     players={players}>
     <Row className="mb-3">
       <Col xs={12}>
@@ -61,7 +60,7 @@ const GameNotStarted = ({ messages, events, me, players }) => {
         </Col>
       </Row>}
   </GameLayout>;
-}
+};
 
 const Game = ({ game }) => {
   const [state, setState] = React.useState();
@@ -71,7 +70,7 @@ const Game = ({ game }) => {
     setState(null);
     const socket = io(`${WS_URL}/${game.wsNamespace}`);
     socket.on('state', (data) => {
-      console.debug('Received state', data)
+      // console.debug('Received state', data);
       setState(data);
     });
     socket.on('game_error', (message) => {
@@ -86,10 +85,10 @@ const Game = ({ game }) => {
       },
       id: socket.id,
       socket: socket,
-    }
+    };
     socket.on('close', window.location.reload);
     return () => socket.disconnect();
-  }, [game.wsNamespace])
+  }, [game.wsNamespace]);
 
   return <>
     <h1>{game.title}</h1>
@@ -97,27 +96,26 @@ const Game = ({ game }) => {
     {!state
       ? <div>Connection en cours...</div>
       : <WsContext.Provider value={action.current}>
-          <ErrorBoundary>
-            {state.connected
-              ? <>
-                  <Audio {...state} />
-                  {state.started
-                    ? <game.Component {...state} />
-                    : <GameNotStarted {...state} />
-                  }
-                </>
-              : <GameIndex {...state} />}
-          </ErrorBoundary>
-        </WsContext.Provider>}
+        <ErrorBoundary>
+          {state.connected
+            ? <>
+              <Audio {...state} />
+              {state.started
+                ? <game.Component {...state} />
+                : <GameNotStarted {...state} />}
+            </>
+            : <GameIndex {...state} />}
+        </ErrorBoundary>
+      </WsContext.Provider>}
   </>;
-}
+};
 
 export default Game;
 
 class ErrorBoundary extends React.Component {
   state = { hasError: false };
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 

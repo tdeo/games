@@ -11,7 +11,8 @@ import LastTurn from './LastTurn';
 import Me from './Me';
 
 const Perudo = ({ formatter, players, events, messages, previousTurn, me }) => {
-  return <GameLayout messages={messages} events={events} me={me}
+  return <GameLayout
+    messages={messages} events={events} me={me}
     players={players}>
     <Me {...me} />
     <Row className="mb-3">
@@ -31,7 +32,7 @@ const Perudo = ({ formatter, players, events, messages, previousTurn, me }) => {
       </Col>}
     </Row>
   </GameLayout>;
-}
+};
 
 export const Component = Perudo;
 export const wsNamespace = 'perudo';

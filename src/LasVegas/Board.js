@@ -3,12 +3,12 @@ import React from 'react';
 import {
   Card,
   Row,
-  Col
-} from 'react-bootstrap'
+  Col,
+} from 'react-bootstrap';
 
 import Dice from '../Components/Dice';
 
-export const Board = ({ me, players, casinos }) => {
+const Board = ({ me, players, casinos }) => {
   if (!casinos) {
     return null;
   }
@@ -26,8 +26,10 @@ export const Board = ({ me, players, casinos }) => {
         {players.filter(p => p.diceCount > 0).map(p => <>
           {p.name}{' '}
           ({p.diceCount} dés{' '}
-          <Dice value="" color={p.color} dotted={false}
-            style={{ top: 8 }}/>
+          <Dice
+            value="" color={p.color} dotted={false}
+            style={{ top: 8 }}
+          />
           )
           {' '}
         </>)}
@@ -59,6 +61,6 @@ export const Board = ({ me, players, casinos }) => {
       </Col>)}
     </Row>
   </>;
-}
+};
 
 export default Board;

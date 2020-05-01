@@ -6,7 +6,7 @@ export default class LasVegas extends Game {
   constructor() {
     super();
 
-    this.deck = []
+    this.deck = [];
     for (let i = 0; i < 5; i++) {
       this.deck.push(60);
       this.deck.push(70);
@@ -64,13 +64,14 @@ export default class LasVegas extends Game {
     try {
       this.currentPlayerIdx = this.nextPlayer().idx;
     } catch {
+      // Suppress exception to play single-player
     }
   }
 
   shuffleDeck() {
     for (let i = this.deck.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * i);
-      let t = this.deck[i];
+      const j = Math.floor(Math.random() * i);
+      const t = this.deck[i];
       this.deck[i] = this.deck[j];
       this.deck[j] = t;
     }
@@ -84,13 +85,13 @@ export default class LasVegas extends Game {
       return;
     }
     if (player.actions.findIndex(e => e === action) === -1) {
-      throw new Error('Vous ne pouvez pas jouer cette action pour l\'instant')
+      throw new Error('Vous ne pouvez pas jouer cette action pour l\'instant');
     }
 
     if (action === 'bet') {
-      this.bet(payload.value)
+      this.bet(payload.value);
     } else if (action === 'roll') {
-      this.roll()
+      this.roll();
     } else if (action === 'startGame') {
       this.startGame();
     } else if (action === 'distribute') {
@@ -100,7 +101,7 @@ export default class LasVegas extends Game {
 
   roll() {
     this.currentPlayer().roll = [];
-    for(let i = 0; i < this.currentPlayer().diceCount; i++) {
+    for (let i = 0; i < this.currentPlayer().diceCount; i++) {
       this.currentPlayer().roll.push(this.rollDice());
     }
 
@@ -111,8 +112,8 @@ export default class LasVegas extends Game {
 
   bet(val) {
     this.lastRound = null;
-    let h = [0, 0, 0, 0, 0, 0, 0];
-    for (let dice of this.currentPlayer().roll) {
+    const h = [0, 0, 0, 0, 0, 0, 0];
+    for (const dice of this.currentPlayer().roll) {
       h[dice] += 1;
     }
 
@@ -123,9 +124,9 @@ export default class LasVegas extends Game {
     let message = `${this.currentPlayer().name} parie ${h[val]} ${val}.`;
 
     this.currentPlayer().diceCount -= h[val];
-    let casino = this.casinos.find(c => c.i === val);
+    const casino = this.casinos.find(c => c.i === val);
     if (!(this.currentPlayer().idx in casino.dices)) {
-      casino.dices[this.currentPlayer().idx] = 0
+      casino.dices[this.currentPlayer().idx] = 0;
     }
     casino.dices[this.currentPlayer().idx] += h[val];
 
@@ -138,26 +139,26 @@ export default class LasVegas extends Game {
       this.currentPlayer().actions = ['distribute'];
     } else {
       message += ` c'est à ${this.currentPlayer().name} de jouer`;
-      this.currentPlayer().actions = ['roll']
+      this.currentPlayer().actions = ['roll'];
     }
     this.addEvent({ message });
   }
 
   distribute() {
-    let message = `${this.currentPlayer().name} a distribué les gains.`
+    let message = `${this.currentPlayer().name} a distribué les gains.`;
     this.lastRound = {};
-    for (let casino of this.casinos) {
-      let byCount = {};
-      for (let playerIdx in casino.dices) {
-        let c = casino.dices[playerIdx];
+    for (const casino of this.casinos) {
+      const byCount = {};
+      for (const playerIdx in casino.dices) {
+        const c = casino.dices[playerIdx];
         if (!(c in byCount)) {
           byCount[c] = 0;
         }
         byCount[c] += 1;
       }
 
-      let winners = [];
-      for(let playerIdx in casino.dices) {
+      const winners = [];
+      for (const playerIdx in casino.dices) {
         if (byCount[casino.dices[playerIdx]] === 1) {
           winners.push({
             playerIdx,
@@ -167,12 +168,12 @@ export default class LasVegas extends Game {
       }
       winners.sort((a, b) => b.count - a.count);
 
-      for (let winner of winners) {
+      for (const winner of winners) {
         if (casino.bills.length === 0) { break; }
         if (!(winner.playerIdx in this.lastRound)) {
           this.lastRound[winner.playerIdx] = 0;
         }
-        let bill = casino.bills.shift();
+        const bill = casino.bills.shift();
         this.lastRound[winner.playerIdx] += bill;
         this.players[winner.playerIdx].earnings.push(bill);
       }
@@ -183,44 +184,44 @@ export default class LasVegas extends Game {
       this.firstPlayerIdx = (1 + this.firstPlayerIdx) % this.players.length;
       this.currentPlayerIdx = this.firstPlayerIdx;
 
-      for (let player of this.players) {
+      for (const player of this.players) {
         player.diceCount = 8;
         player.actions = [];
       }
 
-      for (let casino of this.casinos) {
+      for (const casino of this.casinos) {
         casino.dices = {};
-        casino.bills = []
+        casino.bills = [];
       }
-      message += ` C'est à ${this.currentPlayer().name} de commencer`
+      message += ` C'est à ${this.currentPlayer().name} de commencer`;
       this.addEvent({ message });
 
       this.deal();
       this.currentPlayer().actions = ['roll'];
     } else {
-      this.results = []
-      for (let player of this.players) {
+      this.results = [];
+      for (const player of this.players) {
         this.results.push({
           name: player.name,
           total: player.earnings.reduce((acc, i) => acc + i, 0),
         });
       }
       this.results.sort((a, b) => b.total - a.total);
-      message += ` La partie est finie`
+      message += ' La partie est finie';
       this.addEvent({ message });
     }
   }
 
   deal() {
-    for (let casino of this.casinos) {
+    for (const casino of this.casinos) {
       let value = 0;
       casino.bills = [];
       while (value < 50) {
-        let v = this.deck.pop();
+        const v = this.deck.pop();
         casino.bills.push(v);
         value += v;
       }
-      casino.bills.sort().reverse()
+      casino.bills.sort().reverse();
     }
   }
 
@@ -233,9 +234,9 @@ export default class LasVegas extends Game {
     this.firstPlayerIdx = Math.floor(Math.random() * this.players.length);
     this.currentPlayerIdx = this.firstPlayerIdx;
 
-    this.addEvent({ message: `${this.players[0].name} a lancé la partie, c'est au tour de ${this.currentPlayer().name}` })
+    this.addEvent({ message: `${this.players[0].name} a lancé la partie, c'est au tour de ${this.currentPlayer().name}` });
 
-    for (let player of this.players) {
+    for (const player of this.players) {
       player.actions = [];
     }
 
