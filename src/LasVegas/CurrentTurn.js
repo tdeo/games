@@ -17,7 +17,7 @@ const CurrentTurn = ({ me, currentPlayer }) => {
   return <Row>
     <Col>
       {currentPlayer.roll && <>
-        {currentPlayer.id === me.id
+        {currentPlayer.uuid === me.uuid
           ? 'Mon lancer :'
           : `Lancer de ${currentPlayer.name} :`}
         <br />

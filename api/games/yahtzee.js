@@ -9,8 +9,8 @@ export default class Yahtzee extends Game {
     this.currentRoll = null;
   }
 
-  stateFor(playerId) {
-    const me = this.players.find(p => p.id === playerId);
+  stateFor(socketId) {
+    const me = this.players.find(p => p.socketId === socketId);
     return {
       players: this.players,
       currentRoll: this.currentRoll,
@@ -34,10 +34,10 @@ export default class Yahtzee extends Game {
     };
   }
 
-  perform(playerId, payload) {
+  perform(socketId, payload) {
     const action = payload.action;
 
-    const player = this.players.find(p => p.id === playerId);
+    const player = this.players.find(p => p.socketId === socketId);
     if (!player) {
       return;
     }

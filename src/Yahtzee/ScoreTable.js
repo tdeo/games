@@ -13,9 +13,9 @@ const ScoreTable = ({ players, me }) => {
   const { gameAction } = React.useContext(WsContext);
 
   const scoreFor = (player, cat) => {
-    if ((me.id === player.id) && (me.actions.includes('score')) &&
+    if ((me.uuid === player.uuid) && (me.actions.includes('score')) &&
       (cat in me.action_details.score)) {
-      return <td key={player.id}>
+      return <td key={player.uuid}>
         <Button className="py-0 score-button"
           variant="outline-secondary" size="sm"
           onClick={() => gameAction('score', { category: cat })} >
@@ -23,12 +23,12 @@ const ScoreTable = ({ players, me }) => {
         </Button>
       </td>;
     }
-    return <td key={player.id}>
+    return <td key={player.uuid}>
       {(player.scores[cat] || {}).value}
     </td>;
   }
   const computedScoreFor = (player, cat) => {
-    return <td key={player.id}>
+    return <td key={player.uuid}>
       {player.computedScores[cat] === 0 ? '' : player.computedScores[cat]}
     </td>;
   }

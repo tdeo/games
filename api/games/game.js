@@ -1,6 +1,6 @@
 'use strict';
 
-import { uuid } from './index';
+import { uuid } from '../index';
 
 export default class Game {
   constructor() {
@@ -9,6 +9,7 @@ export default class Game {
     this.messages = [];
     this.started = false;
     this.audioMembers = [];
+    this.uuid = uuid();
 
     this.colors = [
       'red', 'blue', 'purple', 'green', 'black', 'orange',
@@ -22,15 +23,37 @@ export default class Game {
     }
   }
 
-  addPlayer(id, name) {
+  deserialize(str) {
+    let parsed = JSON.parse(str);
+
+    for (let k in parsed) {
+      this[k] = parsed[k];
+    }
+  }
+
+  serialize() {
+    let res = {
+      ...this,
+      players: this.players.map(p => ({
+        ...p,
+        socketId: undefined,
+      })),
+    };
+    return JSON.stringify(res);
+  }
+
+  canPlay(player) {
+    return true;
+  }
+
+  addPlayer(socketId, name) {
     if (this.started) {
       return;
     }
 
     this.players.push({
-      canPlay: () => true,
       ...this.emptyPlayer(),
-      id: id,
+      socketId: socketId,
       uuid: uuid(),
       idx: this.players.length,
       name: name,
@@ -39,12 +62,12 @@ export default class Game {
     });
   }
 
-  addAudioMember(id) {
-    this.audioMembers.push(id);
+  addAudioMember(socketId) {
+    this.audioMembers.push(socketId);
   }
 
-  removeAudioMember(id) {
-    this.audioMembers = this.audioMembers.filter(e => e !== id);
+  removeAudioMember(socketId) {
+    this.audioMembers = this.audioMembers.filter(e => e !== socketId);
   }
 
   addEvent(payload) {
@@ -72,7 +95,7 @@ export default class Game {
       if (i === this.currentPlayerIdx) {
         throw new Error('Pas de joueur précédent')
       }
-      if (this.players[i].canPlay()) {
+      if (this.canPlay(this.players[i])) {
         return this.players[i];
       }
     }
@@ -85,7 +108,7 @@ export default class Game {
       if (i === this.currentPlayerIdx) {
         throw new Error('Pas de joueur suivant')
       }
-      if (this.players[i].canPlay()) {
+      if (this.canPlay(this.players[i])) {
         return this.players[i];
       }
     }

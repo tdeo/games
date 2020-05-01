@@ -33,8 +33,8 @@ export default class LasVegas extends Game {
     }
   }
 
-  stateFor(playerId) {
-    const me = this.players.find(p => p.id === playerId);
+  stateFor(socketId) {
+    const me = this.players.find(p => p.socketId === socketId);
     return {
       results: this.results,
       players: this.players,
@@ -48,13 +48,15 @@ export default class LasVegas extends Game {
     };
   }
 
+  canPlay(player) {
+    return player.diceCount > 0;
+  }
 
   emptyPlayer() {
     return {
       diceCount: 8,
       earnings: [],
       roll: null,
-      canPlay: function() { return this.diceCount > 0 },
     };
   }
 
@@ -74,10 +76,10 @@ export default class LasVegas extends Game {
     }
   }
 
-  perform(playerId, payload) {
+  perform(socketId, payload) {
     const action = payload.action;
 
-    const player = this.players.find(p => p.id === playerId);
+    const player = this.players.find(p => p.socketId === socketId);
     if (!player) {
       return;
     }
@@ -108,6 +110,7 @@ export default class LasVegas extends Game {
   }
 
   bet(val) {
+    this.lastRound = null;
     let h = [0, 0, 0, 0, 0, 0, 0];
     for (let dice of this.currentPlayer().roll) {
       h[dice] += 1;
@@ -116,6 +119,8 @@ export default class LasVegas extends Game {
     if (h[val] === 0) {
       throw new Error(`Tu n'as pas de ${val} à miser !`);
     }
+
+    let message = `${this.currentPlayer().name} parie ${h[val]} ${val}.`;
 
     this.currentPlayer().diceCount -= h[val];
     let casino = this.casinos.find(c => c.i === val);
@@ -128,14 +133,19 @@ export default class LasVegas extends Game {
     this.currentPlayer().roll = null;
 
     this.moveToNextPlayer();
-    if (this.players.every(p => !p.canPlay())) {
+    if (this.players.every(p => !this.canPlay(p))) {
+      message += ` ${this.currentPlayer().name} doit distribuer les gains`;
       this.currentPlayer().actions = ['distribute'];
     } else {
+      message += ` c'est à ${this.currentPlayer().name} de jouer`;
       this.currentPlayer().actions = ['roll']
     }
+    this.addEvent({ message });
   }
 
   distribute() {
+    let message = `${this.currentPlayer().name} a distribué les gains.`
+    this.lastRound = {};
     for (let casino of this.casinos) {
       let byCount = {};
       for (let playerIdx in casino.dices) {
@@ -156,12 +166,14 @@ export default class LasVegas extends Game {
         }
       }
       winners.sort((a, b) => b.count - a.count);
-      console.log(byCount, winners, casino)
 
       for (let winner of winners) {
         if (casino.bills.length === 0) { break; }
-
+        if (!(winner.playerIdx in this.lastRound)) {
+          this.lastRound[winner.playerIdx] = 0;
+        }
         let bill = casino.bills.shift();
+        this.lastRound[winner.playerIdx] += bill;
         this.players[winner.playerIdx].earnings.push(bill);
       }
     }
@@ -180,6 +192,9 @@ export default class LasVegas extends Game {
         casino.dices = {};
         casino.bills = []
       }
+      message += ` C'est à ${this.currentPlayer().name} de commencer`
+      this.addEvent({ message });
+
       this.deal();
       this.currentPlayer().actions = ['roll'];
     } else {
@@ -191,6 +206,8 @@ export default class LasVegas extends Game {
         });
       }
       this.results.sort((a, b) => b.total - a.total);
+      message += ` La partie est finie`
+      this.addEvent({ message });
     }
   }
 

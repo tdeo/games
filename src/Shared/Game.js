@@ -39,6 +39,8 @@ export const GameLayout = ({ messages, events, children, me, players }) => {
 const GameNotStarted = ({ messages, events, me, players }) => {
   const { gameAction } = React.useContext(WsContext);
 
+  console.log(players.find(p => p.actions.includes('startGame')));
+
   return <GameLayout messages={messages} events={events} me={me}
     players={players}>
     <Row className="mb-3">
@@ -69,7 +71,7 @@ const Game = ({ game }) => {
     setState(null);
     const socket = io(`${WS_URL}/${game.wsNamespace}`);
     socket.on('state', (data) => {
-      // console.debug('Received state', data)
+      console.debug('Received state', data)
       setState(data);
     });
     socket.on('game_error', (message) => {

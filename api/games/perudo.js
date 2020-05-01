@@ -10,8 +10,8 @@ export default class Perudo extends Game {
     this.previousTurn = null;
   }
 
-  stateFor(playerId) {
-    const me = this.players.find(p => p.id === playerId);
+  stateFor(socketId) {
+    const me = this.players.find(p => p.socketId === socketId);
     return {
       players: this.players.map(p => ({
         ...p,
@@ -23,20 +23,26 @@ export default class Perudo extends Game {
     };
   }
 
+  playerReady(player) {
+    return player.diceCount === 0 || player.roll !== null;
+  }
+
+  canPlay(player) {
+    return player.diceCount > 0;
+  }
+
   emptyPlayer() {
     return {
       diceCount: 5,
       history: [],
       roll: null,
-      ready: function() { return this.diceCount === 0 || this.roll !== null },
-      canPlay: function() { return this.diceCount > 0 },
     };
   }
 
-  perform(playerId, payload) {
+  perform(socketId, payload) {
     const action = payload.action;
 
-    const player = this.players.find(p => p.id === playerId);
+    const player = this.players.find(p => p.socketId === socketId);
     if (!player) {
       return;
     }
@@ -49,7 +55,7 @@ export default class Perudo extends Game {
     } else if (action === 'bet') {
       this.bet(payload)
     } else if (action === 'shake') {
-      this.shake(playerId)
+      this.shake(socketId)
     } else if (action === 'startGame') {
       this.startGame();
     }
@@ -179,8 +185,8 @@ export default class Perudo extends Game {
     this.currentPlayer().actions = ['bet', 'accuse']
   }
 
-  shake(playerId) {
-    let player = this.players.find(e => e.id === playerId);
+  shake(socketId) {
+    let player = this.players.find(e => e.socketId === socketId);
 
     if (player.diceCount <= 0) {
       return;
@@ -197,7 +203,7 @@ export default class Perudo extends Game {
     }
     player.roll.sort();
 
-    if (this.players.filter(p => p.canPlay()).every(p => p.ready())) {
+    if (this.players.filter(p => this.canPlay(p)).every(p => this.playerReady(p))) {
       this.addEvent({ message: `Tous les joueurs ont lancé, c'est à ${this.currentPlayer().name} de jouer` })
       this.currentPlayer().actions.push('bet')
     }

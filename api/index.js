@@ -7,9 +7,13 @@ export const app = express();
 export const http = require('http').createServer(app);
 export const io = require('socket.io')(http);
 
-import LasVegas from './lasVegas';
-import Perudo from './perudo';
-import Yahtzee from './yahtzee';
+const LOBBY = 'lobby';
+
+import HouseKeeper from './houseKeeper';
+
+import LasVegas from './games/lasVegas';
+import Perudo from './games/perudo';
+import Yahtzee from './games/yahtzee';
 
 export const uuid = () => {
   const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
@@ -18,13 +22,19 @@ export const uuid = () => {
 
 const setupGame = (namespace, klass) => {
   let games = []
+  const houseKeeper = new HouseKeeper(namespace, klass);
+
+  houseKeeper.loadGames().then(res => {
+    games = res;
+  })
+
   let ioNamespace = io.of(namespace);
 
   const playerFor = (socket) => {
     if (!socket.game) {
       return null;
     }
-    return (socket.game.players || []).find(p => p.id === socket.id);
+    return (socket.game.players || []).find(p => p.socketId === socket.id);
   }
 
   const emit = (socket) => {
@@ -48,7 +58,7 @@ const setupGame = (namespace, klass) => {
           players: (g.players || []).map(p => ({
             name: p.name,
             idx: p.idx,
-            connected: !!p.id,
+            connected: !!p.socketId,
           })),
         })),
       });
@@ -56,17 +66,20 @@ const setupGame = (namespace, klass) => {
   }
 
   const gameBroadcast = (game) => {
+    if (game.uuid !== LOBBY) {
+      houseKeeper.saveGame(game);
+    }
     for (let k in ioNamespace.in(game.uuid).sockets) {
       emit(ioNamespace.in(game.uuid).sockets[k])
     }
   }
 
   const lobbyBroadcast = () => {
-    gameBroadcast({ uuid: 'lobby '});
+    gameBroadcast({ uuid: LOBBY });
   }
 
   ioNamespace.on('connection', (socket) => {
-    socket.join('lobby');
+    socket.join(LOBBY);
 
     emit(socket);
 
@@ -82,7 +95,7 @@ const setupGame = (namespace, klass) => {
           event: 'playerDisconnect',
           name: player.name,
         });
-        player.id = null;
+        player.socketId = null;
         gameBroadcast(socket.game);
         socket.game = null;
       }
@@ -92,7 +105,7 @@ const setupGame = (namespace, klass) => {
       if (action === 'selectPlayer') {
         let game = games.find(g => g.uuid === data.gameUuid) || {};
         let player = (game.players || [])[data.idx];
-        if (!player || player.id) {
+        if (!player || player.socketId) {
           return socket.emit('game_error',
             'Ce joueur est déjà dans la partie',
           );
@@ -102,9 +115,9 @@ const setupGame = (namespace, klass) => {
           name: player.name,
         });
         socket.game = game;
-        player.id = socket.id;
+        player.socketId = socket.id;
         socket.join(game.uuid);
-        socket.leave('lobby');
+        socket.leave(LOBBY);
         gameBroadcast(game);
         lobbyBroadcast();
       } else if (action === 'newPlayer') {
@@ -122,7 +135,7 @@ const setupGame = (namespace, klass) => {
           });
           game.addPlayer(socket.id, name);
           socket.game = game;
-          socket.leave('lobby');
+          socket.leave(LOBBY);
           socket.join(game.uuid);
           gameBroadcast(game);
           lobbyBroadcast();
