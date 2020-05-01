@@ -12,7 +12,7 @@ export default class Game {
     this.uuid = uuid();
 
     this.colors = [
-      'red', 'blue', 'purple', 'green', 'black', 'orange',
+      'red', 'blue', 'purple', 'green', 'black', 'orange', 'aqua',
     ];
 
     for (let i = this.colors.length - 1; i > 0; i--) {
