@@ -91,6 +91,10 @@
   color: white;
   background-color: darkorange;
 }
+.dice-aqua {
+  color: white;
+  background-color: aqua;
+}
 
 
 @keyframes dice-roll {
