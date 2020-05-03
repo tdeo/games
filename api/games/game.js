@@ -2,6 +2,9 @@
 
 import { uuid } from '../index';
 
+const COLORS = ['red', 'blue', 'purple', 'green', 'black', 'orange',
+  'aqua', 'fuchsia', 'gold', 'greenyellow', 'white'];
+
 export default class Game {
   constructor() {
     this.players = [];
@@ -11,10 +14,7 @@ export default class Game {
     this.audioMembers = [];
     this.uuid = uuid();
     this.createdAt = Date.now();
-
-    this.colors = [
-      'red', 'blue', 'purple', 'green', 'black', 'orange', 'aqua',
-    ];
+    this.colors = COLORS.map(e => e);
 
     for (let i = this.colors.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * i);

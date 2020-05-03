@@ -23,6 +23,8 @@ import * as LasVegas from './LasVegas';
 import * as Perudo from './Perudo';
 import * as Yahtzee from './Yahtzee';
 
+import Debug from './Debug';
+
 import Game from './Shared/Game';
 
 function App() {
@@ -60,6 +62,7 @@ function App() {
           <Route path="/perudo"><Game game={Perudo} /></Route>
           <Route path="/lasvegas"><Game game={LasVegas} /></Route>
           <Route path="/yahtzee"><Game game={Yahtzee} /></Route>
+          <Route path="/debug"><Debug /></Route>
         </Switch>
       </Container>
     </Router>

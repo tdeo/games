@@ -19,21 +19,11 @@
 .dice.dice-lg {
   height: 35px;
   width: 35px;
-  padding-top: 2px;
   font-size: 20px;
 }
 
-.dice > img {
-  margin-top: -2px;
-}
-
-.dice.dice-lg > img {
-  margin-top: -4px;
-}
-
 .dice-dots {
-  height: 100%;
-  width: 100%;
+  vertical-align: bottom;
 }
 
 .dice-click {
@@ -92,8 +82,24 @@
   background-color: darkorange;
 }
 .dice-aqua {
-  color: white;
+  color: black;
   background-color: aqua;
+}
+.dice-fuchsia {
+  color: white;
+  background-color: fuchsia;
+}
+.dice-gold {
+  color: black;
+  background-color: gold;
+}
+.dice-greenyellow {
+  color: black;
+  background-color: greenyellow;
+}
+.dice-white {
+  color: black;
+  background-color: white;
 }
 
 
