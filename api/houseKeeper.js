@@ -18,6 +18,7 @@ if (process.env.REDIS_URL) {
 const hkeys = promisify(redisClient.hkeys).bind(redisClient);
 const hget = promisify(redisClient.hget).bind(redisClient);
 const hset = promisify(redisClient.hset).bind(redisClient);
+const hdel = promisify(redisClient.hdel).bind(redisClient);
 
 const expired = (game) => {
   if (game.resuts) {
@@ -27,7 +28,7 @@ const expired = (game) => {
   } else if (game.createdAt) {
     return game.createdAt < Date.now() - 10 * 60 * 1000;
   } else {
-    return false;
+    return true;
   }
 };
 
@@ -46,6 +47,8 @@ class RedisHouseKeeper {
       game.deserialize(json);
       if (!expired(game)) {
         games.push(game);
+      } else {
+        await hdel(this.namespace, key);
       }
     }
     return games;
@@ -78,6 +81,8 @@ class FileHouseKeeper {
       game.deserialize(json);
       if (!expired(game)) {
         games.push(game);
+      } else {
+        fs.unlinkSync(`${this.dir}/${key}`);
       }
     }
     return games;
