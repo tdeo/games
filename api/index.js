@@ -54,7 +54,7 @@ const setupGame = (namespace, Klass) => {
     } else {
       socket.emit('state', {
         connected: false,
-        games: games.map(g => ({
+        games: games.sort((a, b) => b.createdAt - a.createdAt).map(g => ({
           uuid: g.uuid,
           name: g.name,
           players: (g.players || []).map(p => ({
@@ -99,6 +99,10 @@ const setupGame = (namespace, Klass) => {
         });
         player.socketId = null;
         gameBroadcast(socket.game);
+        if (socket.game.results &&
+          socket.game.players.every(p => !p.socketId)) {
+          games = games.filter(g => g.uuid !== socket.game.uuid);
+        }
         socket.game = null;
       }
     });
@@ -187,6 +191,7 @@ const setupGame = (namespace, Klass) => {
       } else {
         try {
           socket.game.perform(socket.id, data);
+          socket.game.lastAction = Date.now();
         } catch (error) {
           console.log(socket.game); /* eslint-disable-line no-console */
           console.error(error);

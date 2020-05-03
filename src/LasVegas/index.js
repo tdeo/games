@@ -10,7 +10,7 @@ import Board from './Board';
 
 import { GameLayout } from '../Shared/Game';
 
-const LasVegas = ({ formatter, players, results, events, messages, casinos, currentPlayer, me }) => {
+const LasVegas = ({ players, results, events, messages, casinos, currentPlayer, me }) => {
   return <GameLayout
     messages={messages} events={events} me={me}
     players={players}>

@@ -123,6 +123,9 @@ export default class Perudo extends Game {
       for (const player of this.players) {
         player.actions = [];
       }
+      this.results = [
+        { name: remaining[0].name },
+      ];
       this.addEvent({ message: `${remaining[0].name} a gagné la partie` });
     }
   }

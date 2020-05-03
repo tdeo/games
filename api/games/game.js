@@ -10,6 +10,7 @@ export default class Game {
     this.started = false;
     this.audioMembers = [];
     this.uuid = uuid();
+    this.createdAt = Date.now();
 
     this.colors = [
       'red', 'blue', 'purple', 'green', 'black', 'orange', 'aqua',

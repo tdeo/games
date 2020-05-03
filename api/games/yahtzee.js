@@ -12,6 +12,7 @@ export default class Yahtzee extends Game {
   stateFor(socketId) {
     const me = this.players.find(p => p.socketId === socketId);
     return {
+      results: this.results,
       players: this.players,
       currentRoll: this.currentRoll,
       me: me,
@@ -200,6 +201,14 @@ export default class Yahtzee extends Game {
     this.currentRoll = null;
     this.moveToNextPlayer();
     if (this.categories().length === 0) {
+      this.results = [];
+      for (const player of this.players) {
+        this.results.push({
+          name: player.name,
+          total: player.computedScores.totalFinal,
+        });
+      }
+      this.results.sort((a, b) => b.total - a.total);
       this.addEvent({ message: 'La partie est finie' });
     } else {
       this.currentPlayer().actions = ['rollDices'];

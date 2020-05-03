@@ -19,6 +19,18 @@ const hkeys = promisify(redisClient.hkeys).bind(redisClient);
 const hget = promisify(redisClient.hget).bind(redisClient);
 const hset = promisify(redisClient.hset).bind(redisClient);
 
+const expired = (game) => {
+  if (game.resuts) {
+    return game.lastAction < Date.now() - 3 * 60 * 1000;
+  } else if (game.lastAction) {
+    return game.lastAction < Date.now() - 10 * 60 * 1000;
+  } else if (game.createdAt) {
+    return game.createdAt < Date.now() - 10 * 60 * 1000;
+  } else {
+    return false;
+  }
+};
+
 class RedisHouseKeeper {
   constructor(namespace, Klass) {
     this.namespace = namespace;
@@ -32,12 +44,17 @@ class RedisHouseKeeper {
       const json = await hget(this.namespace, key);
       const game = new this.Klass();
       game.deserialize(json);
-      games.push(game);
+      if (!expired(game)) {
+        games.push(game);
+      }
     }
     return games;
   }
 
   async saveGame(game) {
+    if (expired(game)) {
+      return true;
+    }
     await hset(this.namespace, game.uuid, game.serialize());
   }
 }
@@ -59,12 +76,17 @@ class FileHouseKeeper {
       const json = fs.readFileSync(`${this.dir}/${key}`);
       const game = new this.Klass();
       game.deserialize(json);
-      games.push(game);
+      if (!expired(game)) {
+        games.push(game);
+      }
     }
     return games;
   }
 
   async saveGame(game) {
+    if (expired(game)) {
+      return true;
+    }
     fs.writeFileSync(`${this.dir}/${game.uuid}.json`, game.serialize());
   }
 }

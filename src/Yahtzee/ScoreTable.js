@@ -38,8 +38,8 @@ const ScoreTable = ({ players, me }) => {
     <thead>
       <tr>
         <th />
-        {players.map(({ name, id }) => <th
-          key={id}
+        {players.map(({ name, uuid }) => <th
+          key={uuid}
           style={{ width: 60 }}>
           {name}
         </th>)}
