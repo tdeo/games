@@ -11,6 +11,7 @@ import LastTurn from './LastTurn';
 import Me from './Me';
 
 const Perudo = ({ results, players, events, messages, previousTurn, me }) => {
+  const totalDices = players.reduce((acc, p) => acc + p.diceCount, 0);
   return <GameLayout
     messages={messages} events={events} me={me}
     players={players}>
@@ -22,7 +23,7 @@ const Perudo = ({ results, players, events, messages, previousTurn, me }) => {
         <Me {...me} />
         <Row className="mb-3">
           <Col xs={12} className="mb-3">
-            <b>{players.reduce((acc, p) => acc + p.diceCount, 0)} dés restans</b>
+            <b>Il reste {totalDices} dés</b>
           </Col>
 
           <Col xs={12} className="mb-3">

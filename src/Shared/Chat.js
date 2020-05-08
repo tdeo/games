@@ -12,12 +12,12 @@ import {
 import WsContext from './WsContext';
 
 import './Chat.css';
+import './Colors.css';
 
 const Icon = ({ player }) => {
   return <div
-    className="icon"
-    style={{ backgroundColor: player.color, color: 'white' }}>
-    {player.name[0]}
+    className={`icon dice-${player.color}`}>
+    {player.name[0].toLocaleUpperCase()}
   </div>;
 };
 

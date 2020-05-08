@@ -1,6 +1,7 @@
 import React from 'react';
 
 import './Dice.css';
+import '../Shared/Colors.css';
 
 const Dots = ({ value }) => <svg
   xmlns="http://www.w3.org/2000/svg"
